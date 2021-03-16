@@ -83,12 +83,27 @@ namespace PlaylistGame
                 var username = request.ContentString.Split(new string[] {"Username\":\"", "\","},
                     StringSplitOptions.None);
                 string getusername = username[1];
+                var name = request.ContentString.Split(new string[] {"{\"Name\":\"", "\""},
+                    StringSplitOptions.None);
+                string getname = name[3];
+                string geturl = name[7];
+                var r = request.ContentString.Split(new string[] {"Rating\":", ","},
+                    StringSplitOptions.None);
+                string getrating = r[3];
+                string getgenre = name[13];
+
+                //response.SetContent($"{getname}, {geturl}, {getgenre}, {getrating}");
+                //response.Send(stream);
                 var password =
                     request.ContentString.Split(new string[] {"Password\":\"", "\"}"}, StringSplitOptions.None);
                 string getpassw = password[1];
+                string[] usernamelib =
+                    request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
+
+                string getusernamelib = usernamelib[1];
                 if (request.Url.Path.Contains("users"))
                 {
-                    
+
                     try
                     {
                         var con = new NpgsqlConnection(
@@ -148,82 +163,87 @@ namespace PlaylistGame
 
                     //response.SetContent($"A new User with Username :  {username}  and Password: {password}  was added"); 
                 }
-            
 
 
-                  if (request.Url.Path.Contains("sessions"))
-                  {
-                      try
-                      {
-                          using var sha1 = new SHA1Managed();
-                          var hashedPassword = sha1.ComputeHash(Encoding.UTF8.GetBytes(getpassw));
-                          var hashedPasswordString = string.Concat(hashedPassword.Select(b => b.ToString("x2")));
-                          
-                       
-                          var con = new NpgsqlConnection(
-                              "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                          //var conn = new NpgsqlConnection(con);
-                          con.Open();
-                          NpgsqlCommand command;
-                          NpgsqlDataReader reader;
-                          command = new NpgsqlCommand(
-                              $"SELECT username,password FROM users where username = '"+getusername+"' and password = '"+hashedPasswordString+"'",
-                              con);
-                          // command.Parameters.AddWithValue("username", getusername);
-                          //command.Parameters.AddWithValue("password", hashedPasswordString);
-                          reader = command.ExecuteReader();
-                          reader.Read();
 
-                          if (reader.HasRows)
-                          {
+                if (request.Url.Path.Contains("sessions"))
+                {
+                    try
+                    {
+                        using var sha1 = new SHA1Managed();
+                        var hashedPassword = sha1.ComputeHash(Encoding.UTF8.GetBytes(getpassw));
+                        var hashedPasswordString = string.Concat(hashedPassword.Select(b => b.ToString("x2")));
 
-                              response.StatusCode = 200;
-                              response.SetContent($" Loged In");
-                              response.Send(stream);
-                            
-                          }
-                          else
-                          {
-                              //reader.Close();
-                              response.StatusCode = 400;
-                              response.SetContent($"NO");
-                              response.Send(stream);
-                          }
-                     
-                          con.Close();
-                      }
-                      catch (Exception e)
-                      {
-                          response.StatusCode = 404;
-                          response.SetContent($"{e}");
-                          response.Send(stream);
-                      }
-                    
-                  }
 
-                  //reader.Close();
-                      
-                     // userlogin(username, password);
-                      //response.SetContent($"User with Username :  {username}  and Password: {password}  logged in");
-        } /*
+                        var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                        //var conn = new NpgsqlConnection(con);
+                        con.Open();
+                        NpgsqlCommand command;
+                        NpgsqlDataReader reader;
+                        command = new NpgsqlCommand(
+                            $"SELECT username,password FROM users where username = '" + getusername +
+                            "' and password = '" + hashedPasswordString + "'",
+                            con);
+                        // command.Parameters.AddWithValue("username", getusername);
+                        //command.Parameters.AddWithValue("password", hashedPasswordString);
+                        reader = command.ExecuteReader();
+                        reader.Read();
 
-                  if (request.Url.Path.Contains("lib"))
-                  {
-                      var con = new NpgsqlConnection(
-                          "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                      using var command = new NpgsqlCommand(
-                          "insert into library (name, url, rating, genre,username) values (:name, :url, :rating, :genre, :username)",
-                          con);
-                      con.Open();
-                      command.Parameters.AddWithValue("name", name);
-                      command.Parameters.AddWithValue("url", url);
-                     command.Parameters.AddWithValue("rating", rating);
-                     command.Parameters.AddWithValue("genre", genre);
-                      command.Parameters.AddWithValue("username", usernamelib);
-                      command.ExecuteNonQuery();
-                      response.SetContent($"Song with Name :  {name}  and url: {url}  for user: {usernamelib} is saved");
-                      con.Close();
-                  }
+                        if (reader.HasRows)
+                        {
+
+                            response.StatusCode = 200;
+                            response.SetContent($" Loged In");
+                            response.Send(stream);
+
+                        }
+                        else
+                        {
+                            //reader.Close();
+                            response.StatusCode = 400;
+                            response.SetContent($"NO");
+                            response.Send(stream);
+                        }
+
+                        con.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        response.StatusCode = 404;
+                        response.SetContent($"{e}");
+                        response.Send(stream);
+                    }
+
+                }
+
+                //reader.Close();
+
+                // userlogin(username, password);
+                //response.SetContent($"User with Username :  {username}  and Password: {password}  logged in");
+
+
+                if (request.Url.Path.Contains("lib"))
+                {
+                    var con = new NpgsqlConnection(
+                        "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                    using var command = new NpgsqlCommand(
+                        "insert into library (name, url, rating, genre,username) values (:name, :url, :rating, :genre, :username)",
+                        con);
+                    con.Open();
+                    command.Parameters.AddWithValue("name", getname);
+                    command.Parameters.AddWithValue("url", geturl);
+                    command.Parameters.AddWithValue("rating", getrating);
+                    command.Parameters.AddWithValue("genre", getgenre);
+                    command.Parameters.AddWithValue("username", getusernamelib);
+                    command.ExecuteNonQuery();
+                    response.SetContent(
+                        $"Song with Name :  {getname}  and url: {geturl}  for user: {getusernamelib} is saved");
+                    response.Send(stream);
+                    con.Close();
+
+                }
+            } /*
                   if (request.Url.Path.Contains("playlist"))
                   {
                       var con = new NpgsqlConnection(
@@ -246,73 +266,125 @@ namespace PlaylistGame
                   response.Send(stream);
                 }*/
 
+
             if (request.Method.Contains("GET"))
+            {
+                string text = request.Url.RawUrl;
+                string usernamegetmethod = text.Split("/").Last();
+
+                Response response = new Response {ContentType = "plain/text", StatusCode = 200};
+
+
+                if (request.Url.Path.Contains("users"))
                 {
-                    string text = request.Url.RawUrl;
-                    string usernamegetmethod = text.Split("/").Last();
-
-                    Response response = new Response {ContentType = "plain/text", StatusCode = 200};
-
-
-                    if (request.Url.Path.Contains("users"))
+                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                        StringSplitOptions.None);
+                    if (usernamelib.Length > 0)
                     {
-                        string[] usernamelib =  request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
-                        if (usernamelib.Length >0)
+                        string getusernamelib = usernamelib[1];
+                        if (usernamegetmethod.Equals(getusernamelib))
                         {
-                            string getusernamelib = usernamelib[1];
-                            if(usernamegetmethod.Equals(getusernamelib) ){
-                                var con = new NpgsqlConnection(
-                                    "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                            var con = new NpgsqlConnection(
+                                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
 
-                                NpgsqlCommand command =
-                                    new NpgsqlCommand(
-                                        $"SELECT username, token  FROM users WHERE username='" + usernamegetmethod + "'",
-                                        con);
+                            NpgsqlCommand command =
+                                new NpgsqlCommand(
+                                    $"SELECT username, token  FROM users WHERE username='" + usernamegetmethod + "'",
+                                    con);
 
-                                //command.Parameters.AddWithValue("username", getusernamelib);
-                                con.Open();
-                                NpgsqlDataReader reader = command.ExecuteReader();
-                                response.AddHeader("Connection", "Close");
+                            //command.Parameters.AddWithValue("username", getusernamelib);
+                            con.Open();
+                            NpgsqlDataReader reader = command.ExecuteReader();
+                            response.AddHeader("Connection", "Close");
 
-                                if (reader.HasRows)
+                            if (reader.HasRows)
+                            {
+                                string responseContent = null;
+                                while (reader.Read())
                                 {
-                                    string responseContent = null;
-                                    while (reader.Read())
-                                    {
-                                        responseContent = reader[0].ToString() +" | " + reader[1].ToString();
-                                
-                                    }
-                                    response.SetContent(responseContent);
-                                    response.Send(stream);
-                                }
-                        
-                      
-                                else
-                                {
-                                    response.SetContent("No rows found.");
+                                    responseContent = reader[0].ToString() + " | " + reader[1].ToString();
+
                                 }
 
+                                response.SetContent(responseContent);
                                 response.Send(stream);
                             }
+
+
                             else
                             {
-                                response.SetContent("Not authorized.");
-                                response.Send(stream);
+                                response.SetContent("No rows found.");
                             }
+
+                            response.Send(stream);
                         }
-                        
+                        else
+                        {
+                            response.SetContent("Not authorized.");
+                            response.Send(stream);
+                        }
+                    }
+
                 }
 
+                if (request.Url.RawUrl.Contains("lib"))
+                {
+                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                        StringSplitOptions.None);
+                    if (usernamelib.Length > 0)
+                    {
+                        string getusernamelib = usernamelib[1];
+                        var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                        NpgsqlCommand command =
+                            new NpgsqlCommand(
+                                $"SELECT * FROM library WHERE username='" + getusernamelib + "'",
+                                con);
+
+                        //command.Parameters.AddWithValue("username", getusernamelib);
+                        con.Open();
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        // response.AddHeader("Connection", "Close");
+
+                        if (reader.HasRows)
+                        {
+                            string responseContent = null;
+                            while (reader.Read())
+                            {
+
+                                responseContent = reader[0].ToString() + " | " + reader[1].ToString() + " | " +
+                                                  reader[2].ToString() + " | "
+                                                  + reader[3].ToString() + " | " + reader[4].ToString() + " | " +
+                                                  reader[5].ToString() + " | ";
+
+
+                            }
+
+                            response.SetContent(responseContent);
+                            response.Send(stream);
+                        }
+
+
+                        else
+                        {
+                            response.SetContent("No rows found.");
+
+                            response.Send(stream);
+                        }
+
+                    }
 
 
 
 
 
 
-                // response.SetContent($"{Environment.NewLine}hello client, i hear you came from '{request.UserAgent}'.{Environment.NewLine}" +
-                //                   $"is it nice there?{Environment.NewLine}" +
-                //                 $"you have {request.HeaderCount} headers? whoa *.*" +
-                //               $"Row done  {username}"); 
+
+                    // response.SetContent($"{Environment.NewLine}hello client, i hear you came from '{request.UserAgent}'.{Environment.NewLine}" +
+                    //                   $"is it nice there?{Environment.NewLine}" +
+                    //                 $"you have {request.HeaderCount} headers? whoa *.*" +
+                    //               $"Row done  {username}"); 
 
 
 
@@ -324,13 +396,12 @@ namespace PlaylistGame
 
 
 
-                socket.Close();
+                    socket.Close();
+                }
             }
         }
-    
 
-
-public static Response JoinBattle(Request req, Battle battle) {
+        public static Response JoinBattle(Request req, Battle battle) {
             int userid = tokenToUserId(req.token);
             if (userid != -1)
             {

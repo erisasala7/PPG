@@ -789,10 +789,10 @@ false Zulu
     <database id="2" parent="1" name="playlist">
       <ObjectId>16641</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>656</IntrospectionStateNumber>
+      <IntrospectionStateNumber>677</IntrospectionStateNumber>
       <Current>1</Current>
       <Relations>sequence|table|16676|16642|1
-sequence|table|16714|16716|1
+sequence|table|16741|16743|1
 sequence|table|16732|16734|1
 sequence|table|16657|16659|1
 </Relations>
@@ -874,7 +874,7 @@ UC/10
 </Acl>
       <StateNumber>287</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>657</IntrospectionStateNumber>
+      <IntrospectionStateNumber>678</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <extension id="19" parent="2" name="plpgsql">
@@ -975,9 +975,9 @@ UC/10
       <Type>index</Type>
     </access-method>
     <sequence id="31" parent="18" name="library_libid_seq">
-      <ObjectId>16714</ObjectId>
+      <ObjectId>16741</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
     <sequence id="32" parent="18" name="playlist_pif_seq">
@@ -1000,9 +1000,9 @@ UC/10
       <DataType>integer|0s</DataType>
     </sequence>
     <table id="35" parent="18" name="library">
-      <ObjectId>16716</ObjectId>
+      <ObjectId>16743</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
     </table>
     <table id="36" parent="18" name="playlist">
       <ObjectId>16734</ObjectId>
@@ -1023,38 +1023,38 @@ UC/10
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <DefaultExpression>nextval(&apos;library_libid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
     <column id="40" parent="35" name="name">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="41" parent="35" name="url">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="42" parent="35" name="rating">
       <Position>4</Position>
-      <DataType>double precision|0s</DataType>
-      <StateNumber>634</StateNumber>
-      <TypeId>701</TypeId>
+      <DataType>varchar(255)|0s</DataType>
+      <StateNumber>676</StateNumber>
+      <TypeId>1043</TypeId>
     </column>
     <column id="43" parent="35" name="genre">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="44" parent="35" name="username">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>634</StateNumber>
+      <StateNumber>676</StateNumber>
       <TypeId>1043</TypeId>
     </column>
     <column id="45" parent="36" name="pif">
