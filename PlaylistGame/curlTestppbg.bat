@@ -87,3 +87,42 @@ echo 10) get playlist
 curl -X GET http://localhost:10002/playlist
 echo.
 echo.
+
+REM --------------------------------------------------
+echo 3) edit user data
+echo.
+
+echo.
+curl -X PUT http://localhost:10001/users/kienboec --header "Content-Type: application/json" --header "Authorization: Basic kienboec-ppbToken" -d "{\"Name\": \"Kienboeck\",  \"Bio\": \"me playin...\", \"Image\": \":-)\"}"
+echo.
+curl -X PUT http://localhost:10002/users/altenhof --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Altenhofer\", \"Bio\": \"live long and prosper...\",  \"Image\": \":-D\"}"
+echo.
+
+echo.
+echo.
+echo should fail:
+
+echo.
+curl -X PUT http://localhost:10001/users/kienboec --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Hoax\",  \"Bio\": \"asdf...\", \"Image\": \":-)\"}"
+echo.
+curl -X PUT http://localhost:10001/users/altenhof --header "Content-Type: application/json" --header "Authorization: Basic kienboec-ppbToken" -d "{\"Name\": \"Hoax\", \"Bio\": \"asdf...\",  \"Image\": \":-D\"}"
+echo.
+
+echo.
+echo.
+
+REM --------------------------------------------------
+echo 4) stats
+curl -X GET http://localhost:10001/stats --header "Authorization: Basic kienboec-ppbToken"
+echo.
+curl -X GET http://localhost:10001/stats --header "Authorization: Basic altenhof-ppbToken"
+echo.
+echo.
+
+REM --------------------------------------------------
+echo 5) scoreboard
+curl -X GET http://localhost:10002/score --header "Authorization: Basic kienboec-ppbToken"
+curl -X GET http://localhost:10001/score --header "Authorization: Basic altenhof-ppbToken"
+echo.
+echo.
+

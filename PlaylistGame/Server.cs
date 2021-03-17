@@ -443,6 +443,110 @@ namespace PlaylistGame
 
 
                 }
+                   if (request.Url.RawUrl.Contains("stats"))
+                {
+                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                        StringSplitOptions.None);
+                    if (usernamelib.Length > 0)
+                    {
+                        string getusernamelib = usernamelib[1];
+                        var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                        NpgsqlCommand command =
+                            new NpgsqlCommand(
+                                $"SELECT * FROM stats WHERE username='" + getusernamelib + "'",
+                                con);
+
+                        //command.Parameters.AddWithValue("username", getusernamelib);
+                        con.Open();
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        // response.AddHeader("Connection", "Close");
+                        if (reader.HasRows)
+                        {
+                            List<Object[]> playlist = new List<Object[]>();
+                            while (reader.Read())
+                            {
+                                playlist.Add(new Object[3]
+                                {
+                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
+                                    
+                                });
+                            }
+
+
+                            JObject payload = new JObject();
+                            int i = 0;
+                            foreach (Object[] song in playlist)
+                            {
+                                JObject JSong = new JObject();
+                                JSong.Add(song[1].ToString(), song[2].ToString());
+                                payload.Add(i.ToString(), JSong);
+                                i++;
+                            }
+
+                            response.SetContent(payload.ToString());
+                            response.Send(stream);
+                        }
+                        else
+                        {
+                            response.SetContent("No rows found.");
+                            response.Send(stream);
+                        }
+                    }
+                }
+                      if (request.Url.RawUrl.Contains("score"))
+                {
+                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                        StringSplitOptions.None);
+                    if (usernamelib.Length > 0)
+                    {
+                        string getusernamelib = usernamelib[1];
+                        var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                        NpgsqlCommand command =
+                            new NpgsqlCommand(
+                                $"SELECT * FROM scoreboard WHERE username='" + getusernamelib + "'",
+                                con);
+
+                        //command.Parameters.AddWithValue("username", getusernamelib);
+                        con.Open();
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        // response.AddHeader("Connection", "Close");
+                        if (reader.HasRows)
+                        {
+                            List<Object[]> playlist = new List<Object[]>();
+                            while (reader.Read())
+                            {
+                                playlist.Add(new Object[3]
+                                {
+                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
+                                    
+                                });
+                            }
+
+
+                            JObject payload = new JObject();
+                            int i = 0;
+                            foreach (Object[] song in playlist)
+                            {
+                                JObject JSong = new JObject();
+                                JSong.Add(song[1].ToString(), song[2].ToString());
+                                payload.Add(i.ToString(), JSong);
+                                i++;
+                            }
+
+                            response.SetContent(payload.ToString());
+                            response.Send(stream);
+                        }
+                        else
+                        {
+                            response.SetContent("No rows found.");
+                            response.Send(stream);
+                        }
+                    }
+                }
             }
 
             if (request.Method.Contains("DEL"))
@@ -500,6 +604,77 @@ namespace PlaylistGame
                         throw;
                     }
                     
+                }
+            }
+
+            if (request.Method.Contains("PUT"))
+            {
+                if (request.Url.RawUrl.Contains("users"))
+                {
+                    var updateuser = request.ContentString.Split(new string[] {"\"Name\": \" ", "\""}, StringSplitOptions.None);
+            string name = updateuser[3];
+            string bio = updateuser[7];
+            string img = updateuser[11];
+            Console.WriteLine(name +" " + bio +" "+ img );
+            string urlteil = request.Url.RawUrl.Split("/").Last();
+            Console.WriteLine(urlteil);
+            var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
+            string auth1 = auth[1];
+            Console.WriteLine(auth1);
+            if (urlteil.Equals(auth1))
+            {
+                try
+                {
+                    var connection = new NpgsqlConnection(
+                        "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                    connection.Open();
+                    NpgsqlCommand comm =
+                        new NpgsqlCommand(
+                            $"Select * FROM users where username = '{auth1}'",
+                            connection);
+                    NpgsqlDataReader reader = comm.ExecuteReader();
+                    if (!(reader.HasRows))
+                    {
+                        response.SetContent("No rows found");
+                       response.Send(stream);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var con = new NpgsqlConnection(
+                                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                            con.Open();
+                            NpgsqlCommand command =
+                                new NpgsqlCommand(
+                                    $" Update users set nickname = '{name}', bio = '{bio}', image = '{img}' where username = '{auth1}'",
+                                    con);
+                            command.ExecuteNonQuery();
+                            response.SetContent("Updated");
+                            response.Send(stream);
+                        }
+                        catch (Exception e)
+                        {
+                            response.SetContent($"{e}");
+                            response.Send(stream);
+                            throw;
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"{e}");
+                    //response.Send(stream);
+                    throw;
+                }
+                
+            }
+            else
+            {
+                response.SetContent($"Not Authorized");
+                response.Send(stream);
+            }
                 }
             }
 
