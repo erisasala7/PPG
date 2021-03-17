@@ -16,6 +16,9 @@ namespace PlaylistGame
         Task timer;
         public string log;
         public int currentAdminId = -1;
+        public Battle() {
+
+        }
         public virtual void startTimerAsync()
         {
             Console.WriteLine("Battle will start soon. ");
