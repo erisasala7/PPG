@@ -261,7 +261,12 @@ namespace PlaylistGame
                     var actions = request.ContentString.Split(new[] {"actions\": \"", "\"}"},
                         StringSplitOptions.None);
                     var action = actions[1];
-                    Game.update_actions(action, auth1);
+                    if (action.Contains("VVVVV") || action.Contains("SSSSS") || action.Contains("RRRRR") ||
+                        action.Contains("LLLLL")
+                        || action.Contains("PPPPP"))
+                        Game.update_actions(action, auth1);
+
+                    else Console.WriteLine("Please enter the correct Actions");
                     response.SetContent(" ");
                     response.Send(stream);
                 }
