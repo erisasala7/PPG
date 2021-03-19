@@ -37,7 +37,7 @@ namespace PlaylistGame
                 var connection = new Thread(() => HandleRequest(clientSocket, battle));
                 connection.Start(); //starts the thread that communicates with the client
             }
-        
+
         }
 
         /** 
@@ -97,7 +97,7 @@ namespace PlaylistGame
                         var con = new NpgsqlConnection(
                             "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
                         con.Open();
-                        var com = new NpgsqlCommand($"Select username,token from users where username = '{username}'",
+                        var com = new NpgsqlCommand($"Select username,token from player where username = '{username}'",
                             con);
                         //com.Parameters.AddWithValue("username", getusername);
                         NpgsqlDataReader reader = com.ExecuteReader();
@@ -109,7 +109,7 @@ namespace PlaylistGame
                                 "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
                             conn.Open();
                             using var command = new NpgsqlCommand(
-                                "insert into USERS (username, password, token) values (:username, :password, :token)",
+                                "insert into player (username, password, token) values (:username, :password, :token)",
                                 conn);
 
 
@@ -270,104 +270,157 @@ namespace PlaylistGame
                     con.Close();
                 }
 
-              /*  if (request.Url.RawUrl.Contains("battles"))
+                if (request.Url.RawUrl.Contains("battles"))
                 {
-                    
-                     joinBattle(request,battle);
+                    var username =
+                        request.ContentString.Split(new string[] {"\"Username1\"", "\""}, StringSplitOptions.None);
+                    string username1 = username[2].ToString();
+                    string username2 = username[6].ToString();
+                    battle_logic(username1, username2);
+
+
                 }
-                */
-              
-            }
 
-
-            if (request.Method.Contains("GET"))
-            {
-                string text = request.Url.RawUrl;
-                string usernamegetmethod = text.Split("/").Last();
-
-
-
-
-                if (request.Url.Path.Contains("users"))
+                if (request.Method.Contains("GET"))
                 {
-                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
-                        StringSplitOptions.None);
-                    if (usernamelib.Length > 0)
+                    string text = request.Url.RawUrl;
+                    string usernamegetmethod = text.Split("/").Last();
+
+
+
+
+                    if (request.Url.Path.Contains("users"))
                     {
-                        string getusernamelib = usernamelib[1];
-                        if (usernamegetmethod.Equals(getusernamelib))
+                        string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        if (usernamelib.Length > 0)
                         {
+                            string getusernamelib = usernamelib[1];
+                            if (usernamegetmethod.Equals(getusernamelib))
+                            {
+                                var con = new NpgsqlConnection(
+                                    "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                                NpgsqlCommand command =
+                                    new NpgsqlCommand(
+                                        $"SELECT username, token  FROM users WHERE username='" + usernamegetmethod +
+                                        "'",
+                                        con);
+
+                                //command.Parameters.AddWithValue("username", getusernamelib);
+                                con.Open();
+                                NpgsqlDataReader reader = command.ExecuteReader();
+                                response.AddHeader("Connection", "Close");
+
+                                if (reader.HasRows)
+                                {
+                                    string responseContent = null;
+                                    while (reader.Read())
+                                    {
+                                        responseContent = reader[0].ToString() + " | " + reader[1].ToString();
+
+                                    }
+
+                                    response.SetContent(responseContent);
+                                    response.Send(stream);
+                                }
+
+
+                                else
+                                {
+                                    response.SetContent("No rows found.");
+                                }
+
+                                response.Send(stream);
+                            }
+                            else
+                            {
+                                response.SetContent("Not authorized.");
+                                response.Send(stream);
+                            }
+                        }
+
+                    }
+
+                    if (request.Url.RawUrl.Contains("lib"))
+                    {
+                        string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        if (usernamelib.Length > 0)
+                        {
+                            string getusernamelib = usernamelib[1];
                             var con = new NpgsqlConnection(
                                 "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
 
                             NpgsqlCommand command =
                                 new NpgsqlCommand(
-                                    $"SELECT username, token  FROM users WHERE username='" + usernamegetmethod + "'",
+                                    $"SELECT * FROM library WHERE username='" + getusernamelib + "'",
                                     con);
 
                             //command.Parameters.AddWithValue("username", getusernamelib);
                             con.Open();
                             NpgsqlDataReader reader = command.ExecuteReader();
-                            response.AddHeader("Connection", "Close");
-
+                            // response.AddHeader("Connection", "Close");
                             if (reader.HasRows)
                             {
-                                string responseContent = null;
+                                List<Object[]> playlist = new List<Object[]>();
                                 while (reader.Read())
                                 {
-                                    responseContent = reader[0].ToString() + " | " + reader[1].ToString();
-
+                                    playlist.Add(new Object[4]
+                                    {
+                                        reader[0].ToString(), reader[1].ToString(), reader[3].ToString(),
+                                        reader[4].ToString()
+                                    });
                                 }
 
-                                response.SetContent(responseContent);
+
+                                JObject payload = new JObject();
+                                int i = 0;
+                                foreach (Object[] song in playlist)
+                                {
+                                    JObject JSong = new JObject();
+                                    JSong.Add(song[0].ToString(), song[1].ToString());
+                                    payload.Add(i.ToString(), JSong);
+                                    i++;
+                                }
+
+                                Console.Write(payload.ToString());
+                                response.SetContent(payload.ToString());
                                 response.Send(stream);
                             }
-
-
                             else
                             {
                                 response.SetContent("No rows found.");
+                                response.Send(stream);
                             }
-
-                            response.Send(stream);
-                        }
-                        else
-                        {
-                            response.SetContent("Not authorized.");
-                            response.Send(stream);
                         }
                     }
 
-                }
-
-                if (request.Url.RawUrl.Contains("lib"))
-                {
-                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
-                        StringSplitOptions.None);
-                    if (usernamelib.Length > 0)
+                    if (request.Url.Path.Contains("playlist"))
                     {
-                        string getusernamelib = usernamelib[1];
                         var con = new NpgsqlConnection(
                             "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-
+                        con.Open();
                         NpgsqlCommand command =
                             new NpgsqlCommand(
-                                $"SELECT * FROM library WHERE username='" + getusernamelib + "'",
+                                $"SELECT songname, username  FROM playlist",
                                 con);
 
                         //command.Parameters.AddWithValue("username", getusernamelib);
-                        con.Open();
+
+                        //  NpgsqlDataReader reader = command.ExecuteReader();
+                        response.AddHeader("Connection", "Close");
+
                         NpgsqlDataReader reader = command.ExecuteReader();
-                        // response.AddHeader("Connection", "Close");
+
                         if (reader.HasRows)
                         {
                             List<Object[]> playlist = new List<Object[]>();
                             while (reader.Read())
                             {
-                                playlist.Add(new Object[4]
+                                playlist.Add(new Object[2]
                                 {
-                                    reader[0].ToString(), reader[1].ToString(), reader[3].ToString(),
-                                    reader[4].ToString()
+                                    reader[0].ToString(), reader[1].ToString()
                                 });
                             }
 
@@ -390,256 +443,259 @@ namespace PlaylistGame
                             response.SetContent("No rows found.");
                             response.Send(stream);
                         }
+
+
                     }
-                }
 
-                if (request.Url.Path.Contains("playlist"))
-                {
-                    var con = new NpgsqlConnection(
-                        "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                    con.Open();
-                    NpgsqlCommand command =
-                        new NpgsqlCommand(
-                            $"SELECT songname, username  FROM playlist",
-                            con);
-
-                    //command.Parameters.AddWithValue("username", getusernamelib);
-
-                    //  NpgsqlDataReader reader = command.ExecuteReader();
-                    response.AddHeader("Connection", "Close");
-
-                    NpgsqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
+                    if (request.Url.RawUrl.Contains("stats"))
                     {
-                        List<Object[]> playlist = new List<Object[]>();
-                        while (reader.Read())
+                        string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        if (usernamelib.Length > 0)
                         {
-                            playlist.Add(new Object[2]
+                            string getusernamelib = usernamelib[1];
+                            var con = new NpgsqlConnection(
+                                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                            NpgsqlCommand command =
+                                new NpgsqlCommand(
+                                    $"SELECT * FROM stats WHERE username='" + getusernamelib + "'",
+                                    con);
+
+                            //command.Parameters.AddWithValue("username", getusernamelib);
+                            con.Open();
+                            NpgsqlDataReader reader = command.ExecuteReader();
+                            // response.AddHeader("Connection", "Close");
+                            if (reader.HasRows)
                             {
-                                reader[0].ToString(), reader[1].ToString()
-                            });
-                        }
-
-
-                        JObject payload = new JObject();
-                        int i = 0;
-                        foreach (Object[] song in playlist)
-                        {
-                            JObject JSong = new JObject();
-                            JSong.Add(song[0].ToString(), song[1].ToString());
-                            payload.Add(i.ToString(), JSong);
-                            i++;
-                        }
-
-                        response.SetContent(payload.ToString());
-                        response.Send(stream);
-                    }
-                    else
-                    {
-                        response.SetContent("No rows found.");
-                        response.Send(stream);
-                    }
-
-
-                }
-                   if (request.Url.RawUrl.Contains("stats"))
-                {
-                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
-                        StringSplitOptions.None);
-                    if (usernamelib.Length > 0)
-                    {
-                        string getusernamelib = usernamelib[1];
-                        var con = new NpgsqlConnection(
-                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-
-                        NpgsqlCommand command =
-                            new NpgsqlCommand(
-                                $"SELECT * FROM stats WHERE username='" + getusernamelib + "'",
-                                con);
-
-                        //command.Parameters.AddWithValue("username", getusernamelib);
-                        con.Open();
-                        NpgsqlDataReader reader = command.ExecuteReader();
-                        // response.AddHeader("Connection", "Close");
-                        if (reader.HasRows)
-                        {
-                            List<Object[]> playlist = new List<Object[]>();
-                            while (reader.Read())
-                            {
-                                playlist.Add(new Object[3]
+                                List<Object[]> playlist = new List<Object[]>();
+                                while (reader.Read())
                                 {
-                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
-                                    
-                                });
-                            }
+                                    playlist.Add(new Object[3]
+                                    {
+                                        reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
+
+                                    });
+                                }
 
 
-                            JObject payload = new JObject();
-                            int i = 0;
-                            foreach (Object[] song in playlist)
-                            {
-                                JObject JSong = new JObject();
-                                JSong.Add(song[1].ToString(), song[2].ToString());
-                                payload.Add(i.ToString(), JSong);
-                                i++;
-                            }
-
-                            response.SetContent(payload.ToString());
-                            response.Send(stream);
-                        }
-                        else
-                        {
-                            response.SetContent("No rows found.");
-                            response.Send(stream);
-                        }
-                    }
-                }
-                      if (request.Url.RawUrl.Contains("score"))
-                {
-                    string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
-                        StringSplitOptions.None);
-                    if (usernamelib.Length > 0)
-                    {
-                        string getusernamelib = usernamelib[1];
-                        var con = new NpgsqlConnection(
-                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-
-                        NpgsqlCommand command =
-                            new NpgsqlCommand(
-                                $"SELECT * FROM scoreboard WHERE username='" + getusernamelib + "'",
-                                con);
-
-                        //command.Parameters.AddWithValue("username", getusernamelib);
-                        con.Open();
-                        NpgsqlDataReader reader = command.ExecuteReader();
-                        // response.AddHeader("Connection", "Close");
-                        if (reader.HasRows)
-                        {
-                            List<Object[]> playlist = new List<Object[]>();
-                            while (reader.Read())
-                            {
-                                playlist.Add(new Object[3]
+                                JObject payload = new JObject();
+                                int i = 0;
+                                foreach (Object[] song in playlist)
                                 {
-                                    reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
-                                    
-                                });
+                                    JObject JSong = new JObject();
+                                    JSong.Add(song[1].ToString(), song[2].ToString());
+                                    payload.Add(i.ToString(), JSong);
+                                    i++;
+                                }
+
+                                response.SetContent(payload.ToString());
+                                response.Send(stream);
                             }
-
-
-                            JObject payload = new JObject();
-                            int i = 0;
-                            foreach (Object[] song in playlist)
+                            else
                             {
-                                JObject JSong = new JObject();
-                                JSong.Add(song[1].ToString(), song[2].ToString());
-                                payload.Add(i.ToString(), JSong);
-                                i++;
+                                response.SetContent("No rows found.");
+                                response.Send(stream);
                             }
-
-                            response.SetContent(payload.ToString());
-                            response.Send(stream);
                         }
-                        else
+                    }
+
+                    if (request.Url.RawUrl.Contains("score"))
+                    {
+                        string[] usernamelib = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        if (usernamelib.Length > 0)
                         {
-                            response.SetContent("No rows found.");
-                            response.Send(stream);
+                            string getusernamelib = usernamelib[1];
+                            var con = new NpgsqlConnection(
+                                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                            NpgsqlCommand command =
+                                new NpgsqlCommand(
+                                    $"SELECT * FROM scoreboard WHERE username='" + getusernamelib + "'",
+                                    con);
+
+                            //command.Parameters.AddWithValue("username", getusernamelib);
+                            con.Open();
+                            NpgsqlDataReader reader = command.ExecuteReader();
+                            // response.AddHeader("Connection", "Close");
+                            if (reader.HasRows)
+                            {
+                                List<Object[]> playlist = new List<Object[]>();
+                                while (reader.Read())
+                                {
+                                    playlist.Add(new Object[3]
+                                    {
+                                        reader[0].ToString(), reader[1].ToString(), reader[2].ToString()
+
+                                    });
+                                }
+
+
+                                JObject payload = new JObject();
+                                int i = 0;
+                                foreach (Object[] song in playlist)
+                                {
+                                    JObject JSong = new JObject();
+                                    JSong.Add(song[1].ToString(), song[2].ToString());
+                                    payload.Add(i.ToString(), JSong);
+                                    i++;
+                                }
+
+                                response.SetContent(payload.ToString());
+                                response.Send(stream);
+                            }
+                            else
+                            {
+                                response.SetContent("No rows found.");
+                                response.Send(stream);
+                            }
                         }
                     }
                 }
-            }
 
-            if (request.Method.Contains("DEL"))
-            {
-                if (request.Url.RawUrl.Contains("lib"))
+                if (request.Method.Contains("DEL"))
                 {
-                    string urlteil = request.Url.RawUrl.Split("/").Last();
-                    Console.WriteLine(urlteil);
-                    var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
-                    string auth1 = auth[1];
-                    Console.WriteLine(auth1);
-                    try
+                    if (request.Url.RawUrl.Contains("lib"))
                     {
-                        var connection = new NpgsqlConnection(
-                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                        connection.Open();
-                        NpgsqlCommand comm =
-                            new NpgsqlCommand(
-                                $"Select * FROM library where name = '{urlteil}' and username = '{auth1}'",
-                                connection);
-                        NpgsqlDataReader reader =  comm.ExecuteReader();
-                        if (!(reader.HasRows))
+                        string urlteil = request.Url.RawUrl.Split("/").Last();
+                        Console.WriteLine(urlteil);
+                        var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        string auth1 = auth[1];
+                        Console.WriteLine(auth1);
+                        try
                         {
-                            response.SetContent("No rows found");
-                            response.Send(stream);
+                            var connection = new NpgsqlConnection(
+                                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                            connection.Open();
+                            NpgsqlCommand comm =
+                                new NpgsqlCommand(
+                                    $"Select * FROM library where name = '{urlteil}' and username = '{auth1}'",
+                                    connection);
+                            NpgsqlDataReader reader = comm.ExecuteReader();
+                            if (!(reader.HasRows))
+                            {
+                                response.SetContent("No rows found");
+                                response.Send(stream);
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    var con = new NpgsqlConnection(
+                                        "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                                    con.Open();
+                                    NpgsqlCommand command =
+                                        new NpgsqlCommand(
+                                            $"Delete FROM library where name = '{urlteil}' and username = '{auth1}'",
+                                            con);
+                                    command.ExecuteNonQuery();
+                                    response.SetContent("Deleted");
+                                    response.Send(stream);
+                                }
+                                catch (Exception e)
+                                {
+                                    response.SetContent($"{e}");
+                                    response.Send(stream);
+                                    throw;
+                                }
+                            }
+
                         }
-                        else
+                        catch (Exception e)
+                        {
+                            response.SetContent($"{e}");
+                            response.Send(stream);
+                            throw;
+                        }
+
+                    }
+                }
+
+                if (request.Method.Contains("PUT"))
+                {
+
+                    if (request.Url.RawUrl.Contains("users"))
+                    {
+                        var updateuser =
+                            request.ContentString.Split(new string[] {"\"Name\": \" ", "\""}, StringSplitOptions.None);
+                        string name = updateuser[3];
+                        string bio = updateuser[7];
+                        string img = updateuser[11];
+                        Console.WriteLine(name + " " + bio + " " + img);
+                        string urlteil = request.Url.RawUrl.Split("/").Last();
+                        Console.WriteLine(urlteil);
+                        var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        string auth1 = auth[1];
+                        Console.WriteLine(auth1);
+
+                        if (urlteil.Equals(auth1))
                         {
                             try
                             {
-                                var con = new NpgsqlConnection(
+                                var connection = new NpgsqlConnection(
                                     "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                                con.Open();
-                                NpgsqlCommand command =
+                                connection.Open();
+                                NpgsqlCommand comm =
                                     new NpgsqlCommand(
-                                        $"Delete FROM library where name = '{urlteil}' and username = '{auth1}'",
-                                        con);
-                                command.ExecuteNonQuery();
-                                response.SetContent("Deleted");
-                                response.Send(stream);
+                                        $"Select * FROM users where username = '{auth1}'",
+                                        connection);
+                                NpgsqlDataReader reader = comm.ExecuteReader();
+                                if (!(reader.HasRows))
+                                {
+                                    response.SetContent("No rows found");
+                                    response.Send(stream);
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        var con = new NpgsqlConnection(
+                                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+                                        con.Open();
+                                        NpgsqlCommand command =
+                                            new NpgsqlCommand(
+                                                $" Update users set nickname = '{name}', bio = '{bio}', image = '{img}' where username = '{auth1}'",
+                                                con);
+                                        command.ExecuteNonQuery();
+                                        response.SetContent("Updated");
+                                        response.Send(stream);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        response.SetContent($"{e}");
+                                        response.Send(stream);
+                                        throw;
+                                    }
+                                }
+
                             }
                             catch (Exception e)
                             {
-                                response.SetContent($"{e}");
-                                response.Send(stream);
+                                Console.WriteLine($"{e}");
+                                //response.Send(stream);
                                 throw;
-                            } 
-                        }
-                        
-                    }
-                    catch (Exception e)
-                    {
-                        response.SetContent($"{e}");
-                        response.Send(stream);
-                        throw;
-                    }
-                    
-                }
-            }
+                            }
 
-            if (request.Method.Contains("PUT"))
-            {
-                if (request.Url.RawUrl.Contains("users"))
-                {
-                    var updateuser = request.ContentString.Split(new string[] {"\"Name\": \" ", "\""}, StringSplitOptions.None);
-            string name = updateuser[3];
-            string bio = updateuser[7];
-            string img = updateuser[11];
-            Console.WriteLine(name +" " + bio +" "+ img );
-            string urlteil = request.Url.RawUrl.Split("/").Last();
-            Console.WriteLine(urlteil);
-            var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
-            string auth1 = auth[1];
-            Console.WriteLine(auth1);
-            if (urlteil.Equals(auth1))
-            {
-                try
-                {
-                    var connection = new NpgsqlConnection(
-                        "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-                    connection.Open();
-                    NpgsqlCommand comm =
-                        new NpgsqlCommand(
-                            $"Select * FROM users where username = '{auth1}'",
-                            connection);
-                    NpgsqlDataReader reader = comm.ExecuteReader();
-                    if (!(reader.HasRows))
-                    {
-                        response.SetContent("No rows found");
-                       response.Send(stream);
+                        }
+                        else
+                        {
+                            response.SetContent($"Not Authorized");
+                            response.Send(stream);
+                        }
                     }
-                    else
+
+                    if (request.Url.RawUrl.Contains("actions"))
                     {
+                        var auth = request.UserAuthorization.Split(new string[] {"Basic ", "-ppbToken"},
+                            StringSplitOptions.None);
+                        string auth1 = auth[1];
+                        var actions = request.ContentString.Split(new string[] {"actions\": \"", "\"}"},
+                            StringSplitOptions.None);
+                        string action = actions[1];
+                        Console.WriteLine(action);
                         try
                         {
                             var con = new NpgsqlConnection(
@@ -647,9 +703,10 @@ namespace PlaylistGame
                             con.Open();
                             NpgsqlCommand command =
                                 new NpgsqlCommand(
-                                    $" Update users set nickname = '{name}', bio = '{bio}', image = '{img}' where username = '{auth1}'",
+                                    $" Update player set  actions = '{action}' where username = '{auth1}'",
                                     con);
                             command.ExecuteNonQuery();
+
                             response.SetContent("Updated");
                             response.Send(stream);
                         }
@@ -659,32 +716,213 @@ namespace PlaylistGame
                             response.Send(stream);
                             throw;
                         }
+
+
+
+
+
+
                     }
 
+
+
                 }
-                catch (Exception e)
+
+
+
+                socket.Close();
+            }
+        }
+           public static void battle_logic(string username1, string username2)
+        {
+
+            Console.WriteLine(username1);
+            Console.WriteLine(username2);
+            string responseContent1 = null;
+            string responseContent2 = null;
+            string responseContent3 = null;
+            DateTime time = DateTime.Now;
+            var con = new NpgsqlConnection(
+                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+            NpgsqlCommand command = new NpgsqlCommand(
+                $"INSERT INTO battle(username1,username2,timeofplay) values('" + username1 +
+                "'," + "'" + username2 + "','" + time + "')",
+                con);
+
+            //command.Parameters.AddWithValue("username", getusernamelib);
+            con.Open();
+            command.ExecuteNonQuery();
+            Console.WriteLine("DONE");
+            con.Close();
+            Console.WriteLine(username1 + " please put your actions");
+            NpgsqlCommand command1 =
+                new NpgsqlCommand(
+                    $"SELECT actions FROM player WHERE username='kienboec'",
+                    con);
+
+            //command.Parameters.AddWithValue("username", getusernamelib);
+            con.Open();
+            NpgsqlDataReader reader1 = command1.ExecuteReader();
+            if (reader1.HasRows)
+            {
+                //  string responseContent = null;
+                reader1.Read();
+
+                responseContent1 = reader1[0].ToString();
+                //   response.SetContent(responseContent);
+                // response.Send(stream);
+                Console.WriteLine(responseContent1);
+                if (!(responseContent1.Equals(" ")))
                 {
-                    Console.WriteLine($"{e}");
-                    //response.Send(stream);
-                    throw;
+                    Console.WriteLine(responseContent1);
                 }
-                
+                else
+                {
+                    Console.WriteLine(username1 + " please enter your actions");
+                }
+
             }
             else
             {
-                response.SetContent($"Not Authorized");
-                response.Send(stream);
+                Console.WriteLine(" not found");
+
             }
+
+            con.Close();
+            Console.WriteLine(username2 + " please put your actions");
+            NpgsqlCommand command2 =
+                new NpgsqlCommand(
+                    $"SELECT actions FROM player WHERE username='{username2}'",
+                    con);
+
+            //command.Parameters.AddWithValue("username", getusernamelib);
+            con.Open();
+            NpgsqlDataReader reader2 = command2.ExecuteReader();
+            if (reader2.HasRows)
+            {
+
+                reader2.Read();
+
+                responseContent2 = reader2[0].ToString();
+                //   response.SetContent(responseContent);
+                // response.Send(stream);
+                if (!(responseContent2.Equals(" ")))
+                {
+                    Console.WriteLine(responseContent2);
                 }
+                else
+                {
+                    Console.WriteLine(username1 + " please enter your actions");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine(" not found");
+
             }
 
+            con.Close();
+            NpgsqlCommand command3 =
+                new NpgsqlCommand(
+                    $"Update battle SET actionofuser1 = '{responseContent1}',actionofuser2='{responseContent2}' where username1='{username1}' and username2 = '{username2}'",
+                    con);
 
+            //command.Parameters.AddWithValue("username", getusernamelib);
+            con.Open();
+            command3.ExecuteNonQuery();
+            Console.WriteLine("Updated");
+            con.Close();
+            int win = 0;
+            int games_played = 0;
+            if (responseContent1.Equals(responseContent2))
+            {
+                win = 0;
+            }
 
+            if ((responseContent1.Contains("RRRRR") && (responseContent2.Contains("SSSSS")) ||
+                 ((responseContent1.Contains("RRRRR") && responseContent2.Contains("LLLLL")) ||
+                  (responseContent1.Contains("SSSSS") && responseContent2.Contains("PPPPP")) ||
+                  (responseContent1.Contains("SSSSS") && responseContent2.Contains("LLLLL")) ||
+                  (responseContent1.Contains("LLLLL") && responseContent2.Contains("PPPPP")) ||
+                  (responseContent1.Contains("LLLLL") && responseContent2.Contains("sssss")) ||
+                  (responseContent1.Contains("PPPPP") && responseContent2.Contains("sssss")) ||
+                  (responseContent1.Contains("PPPPP") && responseContent2.Contains("RRRRR")) ||
+                  (responseContent1.Contains("sssss") && responseContent2.Contains("RRRRR")) ||
+                  (responseContent1.Contains("sssss") && responseContent2.Contains("SSSSS")))))
+            {
+                NpgsqlCommand command4 = new NpgsqlCommand(
+                    $"SELECT games_played, points FROM player WHERE username='{username1}'",
+                    con);
 
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                NpgsqlDataReader reader3 = command4.ExecuteReader();
+                reader3.Read();
+                //  string winning = reader3[1].ToString();
+                int winpoint = reader3.GetInt32(1);
+                Console.WriteLine(winpoint);
+                int points = winpoint + 1;
+                Console.WriteLine(points);
+                con.Close();
+                NpgsqlCommand command5 = new NpgsqlCommand(
+                    $"Update player SET points = '{points}' where username='{username1}' ",
+                    con);
 
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                command5.ExecuteNonQuery();
+                Console.WriteLine("Winner1");
+                con.Close();
 
-            socket.Close();
+                NpgsqlCommand command9 = new NpgsqlCommand(
+                    $"Update battle SET winner = '{username1}' where username1='{username1}' and username2 = '{username2}' ",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                command9.ExecuteNonQuery();
+                Console.WriteLine($"{username1}");
+            }
+            else
+            {
+                NpgsqlCommand command6 = new NpgsqlCommand(
+                    $"SELECT games_played, points FROM player WHERE username='{username2}'",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                NpgsqlDataReader reader3 = command6.ExecuteReader();
+                reader3.Read();
+                //  string winning = reader3[1].ToString();
+                int winpoint = reader3.GetInt32(1);
+                Console.WriteLine(winpoint);
+                int points = winpoint + 1;
+                Console.WriteLine(points);
+                con.Close();
+                NpgsqlCommand command7 = new NpgsqlCommand(
+                    $"Update player SET points = '{points}' where username='{username2}' ",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                command7.ExecuteNonQuery();
+                Console.WriteLine("Winner2");
+                con.Close();
+                NpgsqlCommand command8 = new NpgsqlCommand(
+                    $"Update battle SET winner = '{username2}' where username1='{username1}' and username2 = '{username2}' ",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                command8.ExecuteNonQuery();
+                Console.WriteLine($"{username2}");
+
+            }
         }
+
+
 
 
         public static string UserIdToName(int userid)
@@ -761,6 +999,342 @@ namespace PlaylistGame
             return -1;
         }
 
+        public static string firstplayer(string user)
+        {
+            Console.WriteLine($"{user} started the tournament. You have 15s to set 4 Actions");
+                    for (int i = 15; i >= 0; i--)
+                    {
+                        if (i != 0)
+                        {
+                            Console.Write(i + " ");
+                            Thread.Sleep(1000);
+                        }
+                        else Console.WriteLine("\n done");
+                    }
+                    var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                        NpgsqlCommand command =
+                            new NpgsqlCommand(
+                                $"SELECT username, actions FROM player WHERE username='" + user + "' and actions = 'RRRRR'",
+                                con);
+
+                        //command.Parameters.AddWithValue("username", getusernamelib);
+                        con.Open();
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        // response.AddHeader("Connection", "Close");
+                        if (reader.HasRows)
+                        {
+                            List<Object[]> playlist = new List<Object[]>();
+                            reader.Read();
+                            
+                                playlist.Add(new Object[2]
+                                {
+                                    reader[0].ToString(), reader[1].ToString()
+                                   
+                                });
+                                
+                            
+
+
+                            JObject payload = new JObject();
+                            int i = 0;
+                            
+                            foreach (Object[] song in playlist)
+                            {
+                                JObject JSong = new JObject();
+                                JSong.Add(song[0].ToString(), song[1].ToString());
+                                payload.Add(i.ToString(), JSong);
+                                i++;
+                                
+                            }
+                           // string attrib1Value = payload["kienboec"][0]["0"].Value<string>();
+                            //string act = payload.GetValue("kienboec").Value<string>();
+                           
+                           Console.Write(payload.ToString());
+                           
+                            string actionsUser1 = reader[1].ToString();
+                            Console.Write(actionsUser1);
+                            return actionsUser1;
+                        }
+                        else
+                        {
+                            return "No rows found.";
+                           
+                        }
+
+                        
+        }
+        
+         public static string secondplayer(string user)
+        {
+            Console.WriteLine($"{user} started the tournament. You have 15s to set 4 Actions");
+                    for (int i = 15; i >= 0; i--)
+                    {
+                        if (i != 0)
+                        {
+                            Console.Write(i + " ");
+                            Thread.Sleep(1000);
+                        }
+                        else Console.WriteLine("\n done");
+                    }
+                    var con = new NpgsqlConnection(
+                            "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
+
+                        NpgsqlCommand command =
+                            new NpgsqlCommand(
+                                $"SELECT username, actions FROM player WHERE username='" + user + "' and actions = 'RRRRR'",
+                                con);
+
+                        //command.Parameters.AddWithValue("username", getusernamelib);
+                        con.Open();
+                        NpgsqlDataReader reader = command.ExecuteReader();
+                        // response.AddHeader("Connection", "Close");
+                        if (reader.HasRows)
+                        {
+                            List<Object[]> playlist = new List<Object[]>();
+                            reader.Read();
+                            
+                                playlist.Add(new Object[2]
+                                {
+                                    reader[0].ToString(), reader[1].ToString()
+                                   
+                                });
+                                
+                            
+
+
+                            JObject payload = new JObject();
+                            int i = 0;
+                            
+                            foreach (Object[] song in playlist)
+                            {
+                                JObject JSong = new JObject();
+                                JSong.Add(song[0].ToString(), song[1].ToString());
+                                payload.Add(i.ToString(), JSong);
+                                i++;
+                                
+                            }
+                           // string attrib1Value = payload["kienboec"][0]["0"].Value<string>();
+                            //string act = payload.GetValue("kienboec").Value<string>();
+                           
+                           Console.Write(payload.ToString());
+                           
+                            string actionsUser1 = reader[1].ToString();
+                            Console.Write(actionsUser1);
+                            return actionsUser1;
+                        }
+                        else
+                        {
+                            return "No rows found.";
+                           
+                        }
+
+                        
+        }
+
+         public static void battlelog(string username1, string username2)
+         {
+             Console.WriteLine("Please send the first request.");
+             firstplayer(username1);
+             Console.WriteLine("Please send the second request.");
+             firstplayer(username2);
+
+             int win = 0;
+             if (firstplayer(username1).Equals(firstplayer(username2)))
+             {
+                 Console.WriteLine("Draw");
+             }
+         }
+         public List<UserBattleInfo> user_infos = new List<UserBattleInfo>();
+         public List<UserBattleInfo> blocked_users = new List<UserBattleInfo>();
+         public List<UserBattleInfo> active_users= new List<UserBattleInfo>();
+         public string log;
+         public int currentAdminId = -1;
+         //int battleCountdown = -1;
+         bool battleActive = false;
+
+         
+         Task timer;
+         public string joinBattle( UserBattleInfo user ) {
+             if (!battleActive) {
+                 battleActive = true;
+                 timer = Task.Run(startTimerAsync);
+             }
+             active_users.Add(user);
+             //add active user
+
+             timer.Wait();
+             return log;
+         }
+         public virtual void startTimerAsync()
+         {
+             Console.WriteLine("Battle will start soon. ");
+             for (int i = 15; i >= 0; i--)
+             {
+                 Console.WriteLine(i);
+                 Thread.Sleep(1000);
+             }
+             start_tournament();
+         }
+            public void start_tournament() {
+            int playerCount = active_users.Count;
+            if (playerCount > 1)
+            {
+                for (int i = 0; i < playerCount - 1; i++)
+                {
+                    for (int j = i + 1; j < playerCount; j++)
+                    {
+                        bool block = false;
+                        foreach (UserBattleInfo b_user in blocked_users)
+                        {
+                            if (active_users[i] == b_user || active_users[j] == b_user)
+                            {
+                                block = true;
+                            }
+                        }
+                        if (!block)
+                        {
+                            fight(active_users[i], active_users[j]);
+                        }
+                    }
+                }
+                log += "Results: \r\n";
+                int highest = -1;
+                foreach (UserBattleInfo player in active_users)
+                {
+                    log += "  " + player.username + ": " + player.battle_score;
+                    if (player.battle_score > highest)
+                    {
+                        highest = player.battle_score;
+                    }
+                }
+                log += "\r\n";
+                List<UserBattleInfo> winnerList = new List<UserBattleInfo>();
+                foreach (UserBattleInfo player in active_users)
+                {
+                    if (player.battle_score == highest) { winnerList.Add(player); }
+                }
+                if (winnerList.Count > 1)
+                {
+                    log += "Our tournament ended in a draw between ";
+                    foreach (UserBattleInfo player in winnerList)
+                    {
+                        log += player.username + " and ";
+                    }
+                    log = log.Remove(log.Length - 5);
+                    log += ". What a travesty!!!\r\n";
+                    currentAdminId = -1;
+                }
+                else
+                {
+                    log += winnerList[0].username + " is the Winner! Congrats!\r\n";
+                    currentAdminId=finishResult(winnerList);
+                    //currentAdminId = DB_Tools.nameToUserid(winnerList[0].username);
+                    //DB_Tools.incrementUserWin(DB_Tools.nameToUserid(winnerList[0].username));
+                }
+            }
+            else {
+                log += active_users[0].username + " is the Winner! Congrats!\r\n";
+                currentAdminId=finishResult(active_users);
+                //currentAdminId = DB_Tools.nameToUserid(active_users[0].username);
+                //DB_Tools.incrementUserWin(DB_Tools.nameToUserid(active_users[0].username));
+            }
+            foreach (UserBattleInfo user in active_users) {
+                user.battle_score = 0;
+            }
+            blocked_users = new List<UserBattleInfo>();
+            active_users = new List<UserBattleInfo>();
+            battleActive = false;
+
+        }
+             public virtual int finishResult(List<UserBattleInfo> active_users) { 
+            DB.incrementUserWin(DB.nameToUserid(active_users[0].username));
+            return DB.nameToUserid(active_users[0].username); ;
+        }
+
+        /// <summary>
+        /// 1 win, 0 draw, -1 lose
+        /// </summary>
+        public static int action_eval(BActions action_1, BActions action_2) {
+            if (action_1 == BActions.Lizard) {
+                if (action_2 == BActions.Lizard) {
+                    return 0;
+                }
+                if (action_2 == BActions.Spock || action_2 == BActions.Paper) {
+                    return 1;
+                }
+                return -1;
+            }
+
+            if (action_1 == BActions.Spock) {
+                if (action_2 == BActions.Spock) {
+                    return 0;
+                }
+                if (action_2 == BActions.Rock || action_2 == BActions.Scissors) {
+                    return 1;
+                }
+                return -1;
+            }
+
+            if (action_1 == BActions.Scissors) {
+                if (action_2 == BActions.Scissors) {
+                    return 0;
+                }
+                if (action_2 == BActions.Paper || action_2 == BActions.Lizard) {
+                    return 1;
+                }
+                return -1;
+            }
+
+            if (action_1 == BActions.Rock) {
+                if (action_2 == BActions.Rock) {
+                    return 0;
+                }
+                if (action_2 == BActions.Scissors || action_2 == BActions.Lizard) {
+                    return 1;
+                }
+                return -1;
+            }
+
+            if (action_1 == BActions.Paper) {
+                if (action_2 == BActions.Paper) {
+                    return 0;
+                }
+                if (action_2 == BActions.Rock || action_2 == BActions.Spock) {
+                    return 1;
+                }
+                return -1;
+            }
+
+            return 0;
+        }
+
+
+        public void fight(UserBattleInfo pA, UserBattleInfo pB) {
+            int favorA = 0;
+            for (int i = 0; i < 5; i++) {
+                log+= pA.username + " vs " + pB.username + "\r\n";
+                favorA +=action_eval(pA.actions[i], pB.actions[i]);
+                log += "   "+pA.actions[i].ToString() +" vs "+ pB.actions[i] + "\r\n";
+            }
+            if (favorA > 0) {
+                pA.battle_score++;
+                log += pA.username + " wins the round! \r\n";
+            }
+            if (favorA < 0) {
+                pB.battle_score++;
+                log += pB.username + " wins the round! \r\n";
+            }
+            if (favorA == 0) {
+                log += "A draw?!? A conspiracy?\r\n";
+                blocked_users.Add(pA);
+                blocked_users.Add(pB);
+            }
+            log += "\r\n";
+        }
+        
+        
 
 
 

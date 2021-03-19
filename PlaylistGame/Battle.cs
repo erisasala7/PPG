@@ -9,15 +9,30 @@ namespace PlaylistGame
 {
     public class Battle
     {
+     
         public List<UserBattleInfo> user_infos = new List<UserBattleInfo>();
         public List<UserBattleInfo> blocked_users = new List<UserBattleInfo>();
         public List<UserBattleInfo> active_users= new List<UserBattleInfo>();
-        bool battleActive = false;
-        Task timer;
         public string log;
         public int currentAdminId = -1;
+        //int battleCountdown = -1;
+        bool battleActive = false;
+
         public Battle() {
 
+        }
+        Task timer;
+
+        public string joinBattle( UserBattleInfo user ) {
+            if (!battleActive) {
+                battleActive = true;
+                timer = Task.Run(startTimerAsync);
+            }
+            active_users.Add(user);
+            //add active user
+
+            timer.Wait();
+            return log;
         }
         public virtual void startTimerAsync()
         {
@@ -30,18 +45,7 @@ namespace PlaylistGame
             start_tournament();
         }
 
-        public string joinBattle(UserBattleInfo user) {
-            if (!battleActive) {
-                battleActive = true;
-                timer = Task.Run(startTimerAsync);
-            }
-            active_users.Add(user);
-            //add active user
-
-            timer.Wait();
-            return log;
-        }
-          public void start_tournament() {
+        public void start_tournament() {
             int playerCount = active_users.Count;
             if (playerCount > 1)
             {
@@ -113,8 +117,8 @@ namespace PlaylistGame
 
         }
         public virtual int finishResult(List<UserBattleInfo> active_users) { 
-            incrementUserWin(Server.nameToUserid(active_users[0].username));
-            return Server.nameToUserid(active_users[0].username); ;
+            DB.incrementUserWin(DB.nameToUserid(active_users[0].username));
+            return DB.nameToUserid(active_users[0].username); ;
         }
 
         /// <summary>
@@ -174,45 +178,7 @@ namespace PlaylistGame
             return 0;
         }
 
-        public static bool incrementUserWin(int userId)
-        {
-            var conn = new NpgsqlConnection(
-                "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;");
-            conn.Open();
-            NpgsqlCommand command;
-            NpgsqlDataReader reader;
-            command = new NpgsqlCommand($"SELECT wins FROM scoreboard WHERE userid={userId};", conn);
-            reader = command.ExecuteReader();
-            int wins;
-            try
-            {
-                reader.Read();
-                wins = Int32.Parse(reader[0].ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                reader.Close();
-                conn.Close();
-                return false;
-            }
-            reader.Close();
-            wins += 1;
-            try
-            {
-                command = new NpgsqlCommand($"UPDATE scoreboard SET wins={wins} WHERE userid={userId}", conn);
-                reader = command.ExecuteReader();
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
-                reader.Close();
-                conn.Close();
-                return false;
-            }
-            reader.Close();
-            conn.Close();
-            return true;
-        }
+
         public void fight(UserBattleInfo pA, UserBattleInfo pB) {
             int favorA = 0;
             for (int i = 0; i < 5; i++) {
@@ -235,6 +201,11 @@ namespace PlaylistGame
             }
             log += "\r\n";
         }
+
+       
+        }
+     
+
     }
   
-}
+
