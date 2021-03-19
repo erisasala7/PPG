@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace PlaylistGame
 {
     public class Response : IResponse
     {
         private string _content;
+        private JObject _jcontent;
         private string _status;
         private int _statusCode;
         private string[] additionalHeader;
@@ -103,6 +105,11 @@ namespace PlaylistGame
             _content = content;
             Headers["Content-Length"] = $"{_content.Length}";
         }
+        public void SetContent(JObject content)
+        {
+            _jcontent = content;
+           // Headers["Content-Length"] = $"{_jcontent.Length}";
+        }
 
         public void SetContent(byte[] content)
         {
@@ -151,5 +158,7 @@ namespace PlaylistGame
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
+
+        
     }
 }

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace PlaylistGame
 {
@@ -55,7 +56,7 @@ namespace PlaylistGame
             Console.WriteLine($"Raw Request: {readDataString}");
 
 
-            var response = new Response {ContentType = "plain/text", StatusCode = 200};
+            var response = new Response {ContentType = "application/json", StatusCode = 200};
             response.AddHeader("Connection", "Close");
             if (request.Method.Contains("POST"))
             {
@@ -67,8 +68,8 @@ namespace PlaylistGame
                     var password =
                         request.ContentString.Split(new[] {"Password\":\"", "\"}"}, StringSplitOptions.None);
                     var getpassw = password[1];
-                    Game.user_register(getusername, getpassw);
-                    response.SetContent(" ");
+                  string end = Game.user_register(getusername, getpassw);
+                    response.SetContent(end);
                     response.Send(stream);
                 }
 
@@ -149,7 +150,7 @@ namespace PlaylistGame
                     {
                         var getusernamelib = usernamelib[1];
                         Game.get_user_data(usernamegetmethod, getusernamelib);
-                        response.SetContent(" ");
+                        response.SetContent( Game.get_user_data(usernamegetmethod, getusernamelib));
                         response.Send(stream);
                     }
                 }
@@ -180,7 +181,12 @@ namespace PlaylistGame
                     }
                 }
 
-                if (request.Url.Path.Contains("playlist")) Game.get_playlist();
+                if (request.Url.Path.Contains("playlist"))
+                {
+                    Game.get_playlist();
+                    response.SetContent( Game.get_playlist());
+                    response.Send(stream);
+                }
 
                 if (request.Url.RawUrl.Contains("stats"))
                 {
@@ -190,7 +196,7 @@ namespace PlaylistGame
                     {
                         var getusernamelib = usernamelib[1];
                         Game.get_stats(getusernamelib);
-                        response.SetContent(" ");
+                        response.SetContent(Game.get_stats(getusernamelib));
                         response.Send(stream);
                     }
                 }
@@ -203,7 +209,7 @@ namespace PlaylistGame
                     {
                         var getusernamelib = usernamelib[1];
                         Game.get_score(getusernamelib);
-                        response.SetContent(" ");
+                        response.SetContent(Game.get_score(getusernamelib));
                         response.Send(stream);
                     }
                 }
@@ -218,7 +224,7 @@ namespace PlaylistGame
                         StringSplitOptions.None);
                     var auth1 = auth[1];
                     Game.del_lib(urlteil, auth1);
-                    response.SetContent(" ");
+                    response.SetContent(Game.del_lib(urlteil, auth1));
                     response.Send(stream);
                 }
 
@@ -243,7 +249,7 @@ namespace PlaylistGame
                     if (urlteil.Equals(auth1))
                     {
                         Game.update_user(auth1, name, bio, img);
-                        response.SetContent(" ");
+                        response.SetContent(Game.update_user(auth1, name, bio, img));
                         response.Send(stream);
                     }
                     else
@@ -264,10 +270,18 @@ namespace PlaylistGame
                     if (action.Contains("VVVVV") || action.Contains("SSSSS") || action.Contains("RRRRR") ||
                         action.Contains("LLLLL")
                         || action.Contains("PPPPP"))
+                    {
                         Game.update_actions(action, auth1);
+                        response.SetContent(Game.update_actions(action, auth1));
+                    }
 
-                    else Console.WriteLine("Please enter the correct Actions");
-                    response.SetContent(" ");
+
+                    else
+                    {
+                        Console.WriteLine("Please enter the correct Actions");
+                        response.SetContent("Please enter the correct Actions");
+                    }
+                   
                     response.Send(stream);
                 }
 
@@ -281,7 +295,7 @@ namespace PlaylistGame
                     var pos = request.ContentString.Split(new[] {"\"ToPosition\": ", "}"}, StringSplitOptions.None);
                     var pos2 = pos[1];
                     Game.update_playlist(auth1, id1, pos2);
-                    response.SetContent(" ");
+                    response.SetContent(Game.update_playlist(auth1, id1, pos2));
                     response.Send(stream);
                 }
             }

@@ -16,6 +16,8 @@ curl -X POST http://localhost:10002/users --header "Content-Type: application/js
 echo.
 curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"admin\",    \"Password\":\"istrator\"}"
 echo.
+curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"erisa\",    \"Password\":\"test\"}"
+echo.
 
 echo should fail:
 curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"kienboec\", \"Password\":\"daniel\"}"
