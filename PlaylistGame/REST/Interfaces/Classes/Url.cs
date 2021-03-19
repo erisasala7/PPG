@@ -9,44 +9,29 @@ namespace PlaylistGame
 {
     public class Url : IUrl
     {
-        private string _rawUrl;
-        private string _path;
-        private IDictionary<string, string> _parameter;
-        private string[] _segments;
         private string _fragment;
+        private string[] _segments;
 
         public Url(string rawUrl)
         {
-            this._rawUrl = rawUrl;
-            this._parameter = new Dictionary<string, string>();
-            this.SplitUrl(); //instantly gets parameters and path
+            RawUrl = rawUrl;
+            Parameter = new Dictionary<string, string>();
+            SplitUrl(); //instantly gets parameters and path
         }
 
-        public string RawUrl
-        {
-            get => _rawUrl;
-        }
+        public string RawUrl { get; private set; }
 
-        public string Path
-        {
-            get => _path;
-        }
+        public string Path { get; private set; }
 
-        public IDictionary<string, string> Parameter
-        {
-            get => _parameter;
-        }
+        public IDictionary<string, string> Parameter { get; }
 
-        public int ParameterCount => _parameter.Count;
+        public int ParameterCount => Parameter.Count;
 
         public string[] Segments
         {
             get
             {
-                if (_segments != null)
-                {
-                    return _segments;
-                }
+                if (_segments != null) return _segments;
 
                 return new string[] { }; //return empty array
             }
@@ -59,10 +44,8 @@ namespace PlaylistGame
                 var fileStringRegEx = @"^\w*\.\w*$";
                 var fileRegex = new Regex(fileStringRegEx);
                 if (fileRegex.IsMatch(_segments.Last()))
-                {
                     return _segments.Last();
-                }
-                else return "";
+                return "";
             }
         }
 
@@ -70,9 +53,9 @@ namespace PlaylistGame
         {
             get
             {
-                if (!String.IsNullOrEmpty(this.FileName))
+                if (!string.IsNullOrEmpty(FileName))
                 {
-                    var parts = this.FileName.Split(".");
+                    var parts = FileName.Split(".");
                     var sb = new StringBuilder("."); //dot needs to be included
                     sb.Append(parts[
                         1]); //we only want the part behind the dot (which is always there in a valid filename)
@@ -87,7 +70,7 @@ namespace PlaylistGame
         {
             get
             {
-                if (!String.IsNullOrEmpty(_fragment))
+                if (!string.IsNullOrEmpty(_fragment))
                     return _fragment;
                 return "";
             }
@@ -96,41 +79,37 @@ namespace PlaylistGame
         private void SplitUrl()
         {
             //check for fragment first, because everything after the first # is a fragment
-            if (_rawUrl.Contains('#'))
+            if (RawUrl.Contains('#'))
             {
-                var parts = _rawUrl.Split("#", 2, StringSplitOptions.RemoveEmptyEntries);
-                _rawUrl = parts[0]; //everything before the # belongs to the url
+                var parts = RawUrl.Split("#", 2, StringSplitOptions.RemoveEmptyEntries);
+                RawUrl = parts[0]; //everything before the # belongs to the url
                 _fragment = parts[1]; //everytihng after the # belongs to the fragment
             }
 
             //a valid url can be split into two parts
-            var extracted = _rawUrl.Split("?", 2, StringSplitOptions.RemoveEmptyEntries);
-            if (!String.IsNullOrEmpty(extracted[0]))
+            var extracted = RawUrl.Split("?", 2, StringSplitOptions.RemoveEmptyEntries);
+            if (!string.IsNullOrEmpty(extracted[0]))
             {
                 //set the path
                 var segmentsRaw = new ArrayList();
                 foreach (var segment in extracted[0].Split("/", StringSplitOptions.RemoveEmptyEntries))
-                {
                     segmentsRaw.Add(segment); //adds everything to the arraylist
-                }
 
                 var sb = new StringBuilder();
                 if (segmentsRaw.Count > 0)
-                {
                     foreach (string rawSegment in segmentsRaw.ToArray())
                     {
                         sb.Append("/");
                         sb.Append(rawSegment);
                     }
-                }
                 else sb.Append("/"); //no segments means root was requested
 
 
-                _path = sb.ToString();
+                Path = sb.ToString();
                 _segments = sb.ToString().Split("/", StringSplitOptions.RemoveEmptyEntries);
             }
 
-            if (extracted.Length > 1 && !String.IsNullOrEmpty(extracted[1]))
+            if (extracted.Length > 1 && !string.IsNullOrEmpty(extracted[1]))
             {
                 //these should be the parameters, which are separated by "&"
                 var keyValuePairs = extracted[1].Split("&", StringSplitOptions.RemoveEmptyEntries);
@@ -141,7 +120,7 @@ namespace PlaylistGame
                     //the key value pairs are seperated by "="
                     var keyValue =
                         pair.Split("=", 2, StringSplitOptions.RemoveEmptyEntries); //should only be 2 items
-                    _parameter.Add(keyValue[0], keyValue[1]);
+                    Parameter.Add(keyValue[0], keyValue[1]);
                 }
             }
         }

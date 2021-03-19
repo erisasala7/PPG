@@ -7,44 +7,43 @@ namespace PlaylistGame
 {
     public class Response : IResponse
     {
-  
-        private readonly IDictionary<string, string> _headers;
-        private int _statusCode;
-        private string _status;
         private string _content;
+        private string _status;
+        private int _statusCode;
+        private string[] additionalHeader;
+        private string additionalPayload;
+        private Request req;
+
+        private Status.Status_Code status;
 
         public Response()
         {
-            _headers = new Dictionary<string, string>();
-            _headers.Add("Server", "BIF-SWE1-Server"); //default value if nothing else is set
-            _headers.Add("Content-Length", "0"); //default value if no body is set
+            Headers = new Dictionary<string, string>();
+            Headers.Add("Server", "BIF-SWE1-Server"); //default value if nothing else is set
+            Headers.Add("Content-Length", "0"); //default value if no body is set
         }
 
-        Status.Status_Code status;
-        Request req;
-        string[] additionalHeader;
-        string additionalPayload;
-        public Response(Request request, Status.Status_Code Status, string[] AdditionalHeader=null, string AdditionalPayload = null) {
+        public Response(Request request, Status.Status_Code Status, string[] AdditionalHeader = null,
+            string AdditionalPayload = null)
+        {
             req = request;
             status = Status;
             additionalHeader = AdditionalHeader;
             additionalPayload = AdditionalPayload;
         }
-        public IDictionary<string, string> Headers => _headers;
 
-        public int ContentLength
-        {
-            get => Int32.Parse(_headers["Content-Length"]);
-        }
+        public IDictionary<string, string> Headers { get; }
+
+        public int ContentLength => int.Parse(Headers["Content-Length"]);
 
         public string ContentType
         {
-            get => _headers.ContainsKey("Content-Type") ? _headers["Content-Type"] : "";
+            get => Headers.ContainsKey("Content-Type") ? Headers["Content-Type"] : "";
             set
             {
                 //check if it already exists first, because we only want to update it then
-                if (!_headers.ContainsKey("Content-Type")) _headers.Add("Content-Type", value);
-                else _headers["Content-Type"] = value;
+                if (!Headers.ContainsKey("Content-Type")) Headers.Add("Content-Type", value);
+                else Headers["Content-Type"] = value;
             }
         }
 
@@ -52,10 +51,7 @@ namespace PlaylistGame
         {
             get
             {
-                if (_statusCode == 0)
-                {
-                    throw new Exception("Status code was never set!");
-                }
+                if (_statusCode == 0) throw new Exception("Status code was never set!");
 
                 return _statusCode;
             }
@@ -71,8 +67,6 @@ namespace PlaylistGame
                 {
                     throw new Exception($"The provided status code '{value}' is not valid!");
                 }
-
-
             }
         }
 
@@ -80,10 +74,7 @@ namespace PlaylistGame
         {
             get
             {
-                if (String.IsNullOrEmpty(_status))
-                {
-                    throw new Exception("No status code set!");
-                }
+                if (string.IsNullOrEmpty(_status)) throw new Exception("No status code set!");
 
                 return _status;
             }
@@ -91,43 +82,39 @@ namespace PlaylistGame
 
         public void AddHeader(string header, string value)
         {
-            if (_headers.ContainsKey(header)) _headers[header] = value;
-            else _headers.Add(header, value);
+            if (Headers.ContainsKey(header)) Headers[header] = value;
+            else Headers.Add(header, value);
         }
 
         public string ServerHeader
         {
-            get => _headers["Server"];
+            get => Headers["Server"];
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    _headers["Server"] = value;
-                }
+                if (!string.IsNullOrEmpty(value))
+                    Headers["Server"] = value;
                 else
-                {
                     throw new Exception("No value when setting the 'Server' header!");
-                }
             }
         }
 
         public void SetContent(string content)
         {
             _content = content;
-            _headers["Content-Length"] = $"{_content.Length}";
+            Headers["Content-Length"] = $"{_content.Length}";
         }
 
         public void SetContent(byte[] content)
         {
             _content = Encoding.UTF8.GetString(content);
-            _headers["Content-Length"] = $"{_content.Length}";
+            Headers["Content-Length"] = $"{_content.Length}";
         }
 
         public void SetContent(Stream stream)
         {
             var reader = new StreamReader(stream);
             _content = reader.ReadToEnd();
-            _headers["Content-Length"] = $"{_content.Length}";
+            Headers["Content-Length"] = $"{_content.Length}";
         }
 
         public void Send(Stream network)
@@ -136,16 +123,10 @@ namespace PlaylistGame
             var builder = new StringBuilder();
 
             builder.Append($"HTTP/1.1 {_status}{Environment.NewLine}");
-            foreach (var header in _headers)
-            {
-                builder.Append($"{header.Key}: {header.Value}{Environment.NewLine}");
-            }
+            foreach (var header in Headers) builder.Append($"{header.Key}: {header.Value}{Environment.NewLine}");
 
             builder.Append(Environment.NewLine); //marks beginning of body
-            if (!String.IsNullOrEmpty(_content))
-            {
-                builder.Append(_content);
-            }
+            if (!string.IsNullOrEmpty(_content)) builder.Append(_content);
 
             writer.Write(builder.ToString());
             writer.Flush();
@@ -170,10 +151,5 @@ namespace PlaylistGame
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
-
-       
-        
     }
 }
-
-    

@@ -793,16 +793,14 @@ false Zulu
     <database id="3" parent="1" name="playlist">
       <ObjectId>16641</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>769</IntrospectionStateNumber>
+      <IntrospectionStateNumber>989</IntrospectionStateNumber>
       <Current>1</Current>
-      <Relations>sequence|table|16676|16642|1
-sequence|table|16732|16734|1
-sequence|table|16741|16743|1
-sequence|table|16750|16752|1
-sequence|table|16761|16763|1
-sequence|table|16772|16774|1
-sequence|table|16785|16787|1
-sequence|table|16857|16859|1
+      <Relations>sequence|table|17107|17109|1
+sequence|table|17118|17120|1
+sequence|table|17132|17134|1
+sequence|table|17146|17148|1
+sequence|table|17157|17159|1
+sequence|table|17168|17170|1
 </Relations>
     </database>
     <database id="4" parent="1" name="postgres">
@@ -882,7 +880,7 @@ UC/10
 </Acl>
       <StateNumber>287</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>770</IntrospectionStateNumber>
+      <IntrospectionStateNumber>990</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <extension id="20" parent="3" name="plpgsql">
@@ -983,247 +981,240 @@ UC/10
       <Type>index</Type>
     </access-method>
     <sequence id="32" parent="19" name="battle_battleid_seq">
-      <ObjectId>16857</ObjectId>
+      <ObjectId>17168</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
     <sequence id="33" parent="19" name="library_libid_seq">
-      <ObjectId>16741</ObjectId>
+      <ObjectId>17118</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
     <sequence id="34" parent="19" name="player_userid_seq">
-      <ObjectId>16785</ObjectId>
+      <ObjectId>17107</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
-    <sequence id="35" parent="19" name="playlist_pif_seq">
-      <ObjectId>16732</ObjectId>
+    <sequence id="35" parent="19" name="playlist_pid_seq">
+      <ObjectId>17132</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>655</StateNumber>
+      <StateNumber>985</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
     <sequence id="36" parent="19" name="scoreboard_statsid_seq">
-      <ObjectId>16772</ObjectId>
+      <ObjectId>17157</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>737</StateNumber>
+      <StateNumber>987</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
     <sequence id="37" parent="19" name="stats_statsid_seq">
-      <ObjectId>16761</ObjectId>
+      <ObjectId>17146</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>736</StateNumber>
+      <StateNumber>986</StateNumber>
       <DataType>integer|0s</DataType>
     </sequence>
-    <sequence id="38" parent="19" name="students_p_id_seq">
-      <ObjectId>16676</ObjectId>
+    <table id="38" parent="19" name="battle">
+      <ObjectId>17170</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>584</StateNumber>
-      <SequenceIdentity>null..2344567</SequenceIdentity>
-      <DataType>integer|0s</DataType>
-    </sequence>
-    <sequence id="39" parent="19" name="users_userid_seq">
-      <ObjectId>16750</ObjectId>
-      <Owner>postgres</Owner>
-      <StateNumber>727</StateNumber>
-      <DataType>integer|0s</DataType>
-    </sequence>
-    <table id="40" parent="19" name="battle">
-      <ObjectId>16859</ObjectId>
-      <Owner>postgres</Owner>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
     </table>
-    <table id="41" parent="19" name="library">
-      <ObjectId>16743</ObjectId>
+    <table id="39" parent="19" name="library">
+      <ObjectId>17120</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
     </table>
-    <table id="42" parent="19" name="player">
-      <ObjectId>16787</ObjectId>
+    <table id="40" parent="19" name="player">
+      <ObjectId>17109</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>751</StateNumber>
+      <StateNumber>984</StateNumber>
     </table>
-    <table id="43" parent="19" name="playlist">
-      <ObjectId>16734</ObjectId>
+    <table id="41" parent="19" name="playlist">
+      <ObjectId>17134</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>655</StateNumber>
+      <StateNumber>985</StateNumber>
     </table>
-    <table id="44" parent="19" name="scoreboard">
-      <ObjectId>16774</ObjectId>
+    <table id="42" parent="19" name="scoreboard">
+      <ObjectId>17159</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>737</StateNumber>
+      <StateNumber>987</StateNumber>
     </table>
-    <table id="45" parent="19" name="stats">
-      <ObjectId>16763</ObjectId>
+    <table id="43" parent="19" name="stats">
+      <ObjectId>17148</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>736</StateNumber>
+      <StateNumber>986</StateNumber>
     </table>
-    <table id="46" parent="19" name="students">
-      <ObjectId>16642</ObjectId>
-      <Owner>postgres</Owner>
-      <StateNumber>532</StateNumber>
-    </table>
-    <table id="47" parent="19" name="users">
-      <ObjectId>16752</ObjectId>
-      <Owner>postgres</Owner>
-      <StateNumber>736</StateNumber>
-    </table>
-    <column id="48" parent="40" name="battleid">
+    <column id="44" parent="38" name="battleid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <DefaultExpression>nextval(&apos;battle_battleid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="49" parent="40" name="username1">
+    <column id="45" parent="38" name="username1">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="50" parent="40" name="username2">
+    <column id="46" parent="38" name="username2">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="51" parent="40" name="timeofplay">
+    <column id="47" parent="38" name="timeofplay">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1114</TypeId>
     </column>
-    <column id="52" parent="40" name="winner">
+    <column id="48" parent="38" name="winner">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="53" parent="40" name="actionofuser1">
+    <column id="49" parent="38" name="actionofuser1">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="54" parent="40" name="actionofuser2">
+    <column id="50" parent="38" name="actionofuser2">
       <Position>7</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>768</StateNumber>
+      <StateNumber>988</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="55" parent="41" name="libid">
+    <column id="51" parent="39" name="libid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <DefaultExpression>nextval(&apos;library_libid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="56" parent="41" name="name">
+    <column id="52" parent="39" name="name">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="57" parent="41" name="url">
+    <column id="53" parent="39" name="url">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="58" parent="41" name="rating">
+    <column id="54" parent="39" name="rating">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="59" parent="41" name="genre">
+    <column id="55" parent="39" name="genre">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="60" parent="41" name="username">
+    <column id="56" parent="39" name="username">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>676</StateNumber>
+      <StateNumber>984</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="61" parent="42" name="userid">
+    <foreign-key id="57" parent="39" name="library_username_fkey">
+      <ObjectId>17127</ObjectId>
+      <StateNumber>984</StateNumber>
+      <ColNames>username</ColNames>
+      <RefTableId>17109</RefTableId>
+      <RefColPositions>2</RefColPositions>
+      <RefTableName>player</RefTableName>
+      <RefKeyName>player_username_key</RefKeyName>
+      <RefColNames>username</RefColNames>
+    </foreign-key>
+    <column id="58" parent="40" name="userid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <DefaultExpression>nextval(&apos;player_userid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="62" parent="42" name="username">
+    <column id="59" parent="40" name="username">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="63" parent="42" name="password">
+    <column id="60" parent="40" name="password">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="64" parent="42" name="nickname">
+    <column id="61" parent="40" name="nickname">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="65" parent="42" name="email">
+    <column id="62" parent="40" name="email">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="66" parent="42" name="bio">
+    <column id="63" parent="40" name="bio">
       <Position>6</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="67" parent="42" name="token">
+    <column id="64" parent="40" name="token">
       <Position>7</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="68" parent="42" name="games_played">
+    <column id="65" parent="40" name="games_played">
       <Position>8</Position>
       <DataType>integer|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="69" parent="42" name="points">
+    <column id="66" parent="40" name="points">
       <Position>9</Position>
       <DataType>integer|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="70" parent="42" name="image">
+    <column id="67" parent="40" name="image">
       <Position>10</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="71" parent="42" name="actions">
+    <column id="68" parent="40" name="actions">
       <Position>11</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>751</StateNumber>
+      <StateNumber>983</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <index id="72" parent="42" name="player_username_key">
-      <ObjectId>16794</ObjectId>
-      <StateNumber>751</StateNumber>
+    <column id="69" parent="40" name="admin">
+      <Position>12</Position>
+      <DataType>integer|0s</DataType>
+      <StateNumber>983</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <index id="70" parent="40" name="player_username_key">
+      <ObjectId>17116</ObjectId>
+      <StateNumber>983</StateNumber>
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
@@ -1231,219 +1222,107 @@ UC/10
       <CollationNames>default</CollationNames>
       <ClassIds>3126</ClassIds>
     </index>
-    <key id="73" parent="42" name="player_username_key">
-      <ObjectId>16795</ObjectId>
-      <StateNumber>751</StateNumber>
+    <key id="71" parent="40" name="player_username_key">
+      <ObjectId>17117</ObjectId>
+      <StateNumber>983</StateNumber>
       <ColNames>username</ColNames>
       <UnderlyingIndexName>player_username_key</UnderlyingIndexName>
     </key>
-    <column id="74" parent="43" name="pif">
+    <column id="72" parent="41" name="pid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>655</StateNumber>
-      <DefaultExpression>nextval(&apos;playlist_pif_seq&apos;::regclass)</DefaultExpression>
+      <StateNumber>985</StateNumber>
+      <DefaultExpression>nextval(&apos;playlist_pid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="75" parent="43" name="songname">
+    <column id="73" parent="41" name="songname">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>655</StateNumber>
+      <StateNumber>985</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="76" parent="43" name="username">
+    <column id="74" parent="41" name="username">
       <Position>3</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>655</StateNumber>
+      <StateNumber>985</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="77" parent="44" name="statsid">
+    <column id="75" parent="41" name="position">
+      <Position>4</Position>
+      <DataType>integer|0s</DataType>
+      <StateNumber>985</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <foreign-key id="76" parent="41" name="playlist_username_fkey">
+      <ObjectId>17141</ObjectId>
+      <StateNumber>985</StateNumber>
+      <ColNames>username</ColNames>
+      <RefTableId>17109</RefTableId>
+      <RefColPositions>2</RefColPositions>
+      <RefTableName>player</RefTableName>
+      <RefKeyName>player_username_key</RefKeyName>
+      <RefColNames>username</RefColNames>
+    </foreign-key>
+    <column id="77" parent="42" name="statsid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>737</StateNumber>
+      <StateNumber>987</StateNumber>
       <DefaultExpression>nextval(&apos;scoreboard_statsid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="78" parent="44" name="username">
+    <column id="78" parent="42" name="username">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>737</StateNumber>
+      <StateNumber>987</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="79" parent="44" name="wins">
+    <column id="79" parent="42" name="wins">
       <Position>3</Position>
       <DataType>integer|0s</DataType>
-      <StateNumber>737</StateNumber>
+      <StateNumber>987</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="80" parent="44" name="scoreboard_username_fkey">
-      <ObjectId>16778</ObjectId>
-      <StateNumber>737</StateNumber>
+    <foreign-key id="80" parent="42" name="scoreboard_username_fkey">
+      <ObjectId>17163</ObjectId>
+      <StateNumber>987</StateNumber>
       <ColNames>username</ColNames>
-      <RefTableId>16752</RefTableId>
+      <RefTableId>17109</RefTableId>
       <RefColPositions>2</RefColPositions>
-      <RefTableName>users</RefTableName>
-      <RefKeyName>users_username_key</RefKeyName>
+      <RefTableName>player</RefTableName>
+      <RefKeyName>player_username_key</RefKeyName>
       <RefColNames>username</RefColNames>
     </foreign-key>
-    <column id="81" parent="45" name="statsid">
+    <column id="81" parent="43" name="statsid">
       <Position>1</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>736</StateNumber>
+      <StateNumber>986</StateNumber>
       <DefaultExpression>nextval(&apos;stats_statsid_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <column id="82" parent="45" name="username">
+    <column id="82" parent="43" name="username">
       <Position>2</Position>
       <DataType>varchar(255)|0s</DataType>
-      <StateNumber>736</StateNumber>
+      <StateNumber>986</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="83" parent="45" name="wins">
+    <column id="83" parent="43" name="wins">
       <Position>3</Position>
       <DataType>integer|0s</DataType>
-      <StateNumber>736</StateNumber>
+      <StateNumber>986</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="84" parent="45" name="stats_username_fkey">
-      <ObjectId>16767</ObjectId>
-      <StateNumber>736</StateNumber>
+    <foreign-key id="84" parent="43" name="stats_username_fkey">
+      <ObjectId>17152</ObjectId>
+      <StateNumber>986</StateNumber>
       <ColNames>username</ColNames>
-      <RefTableId>16752</RefTableId>
+      <RefTableId>17109</RefTableId>
       <RefColPositions>2</RefColPositions>
-      <RefTableName>users</RefTableName>
-      <RefKeyName>users_username_key</RefKeyName>
+      <RefTableName>player</RefTableName>
+      <RefKeyName>player_username_key</RefKeyName>
       <RefColNames>username</RefColNames>
     </foreign-key>
-    <column id="85" parent="46" name="p_id">
-      <Position>1</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-      <StateNumber>584</StateNumber>
-      <TypeId>23</TypeId>
-      <IdentityKind>always</IdentityKind>
-      <Computed>1</Computed>
-    </column>
-    <column id="86" parent="46" name="firstname">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>532</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="87" parent="46" name="lastname">
-      <Position>3</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>532</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="88" parent="46" name="address">
-      <Position>4</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>532</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="89" parent="46" name="city">
-      <Position>5</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>532</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <index id="90" parent="46" name="students_pkey">
-      <ObjectId>16648</ObjectId>
-      <StateNumber>532</StateNumber>
-      <ColNames>p_id</ColNames>
-      <Unique>1</Unique>
-      <Primary>1</Primary>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationIds>0</CollationIds>
-      <ClassIds>1978</ClassIds>
-    </index>
-    <key id="91" parent="46" name="students_pkey">
-      <ObjectId>16649</ObjectId>
-      <StateNumber>532</StateNumber>
-      <ColNames>p_id</ColNames>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>students_pkey</UnderlyingIndexName>
-    </key>
-    <column id="92" parent="47" name="userid">
-      <Position>1</Position>
-      <DataType>integer|0s</DataType>
-      <NotNull>1</NotNull>
-      <StateNumber>727</StateNumber>
-      <DefaultExpression>nextval(&apos;users_userid_seq&apos;::regclass)</DefaultExpression>
-      <TypeId>23</TypeId>
-    </column>
-    <column id="93" parent="47" name="username">
-      <Position>2</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="94" parent="47" name="password">
-      <Position>3</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="95" parent="47" name="nickname">
-      <Position>4</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="96" parent="47" name="email">
-      <Position>5</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="97" parent="47" name="bio">
-      <Position>6</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="98" parent="47" name="token">
-      <Position>7</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <column id="99" parent="47" name="games_played">
-      <Position>8</Position>
-      <DataType>integer|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>23</TypeId>
-    </column>
-    <column id="100" parent="47" name="points">
-      <Position>9</Position>
-      <DataType>integer|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>23</TypeId>
-    </column>
-    <column id="101" parent="47" name="image">
-      <Position>10</Position>
-      <DataType>varchar(255)|0s</DataType>
-      <StateNumber>727</StateNumber>
-      <TypeId>1043</TypeId>
-    </column>
-    <index id="102" parent="47" name="users_username_key">
-      <ObjectId>16759</ObjectId>
-      <StateNumber>727</StateNumber>
-      <ColNames>username</ColNames>
-      <Unique>1</Unique>
-      <AccessMethodId>403</AccessMethodId>
-      <CollationIds>100</CollationIds>
-      <CollationNames>default</CollationNames>
-      <ClassIds>3126</ClassIds>
-    </index>
-    <key id="103" parent="47" name="users_username_key">
-      <ObjectId>16760</ObjectId>
-      <StateNumber>727</StateNumber>
-      <ColNames>username</ColNames>
-      <UnderlyingIndexName>users_username_key</UnderlyingIndexName>
-    </key>
   </database-model>
 </dataSource>
