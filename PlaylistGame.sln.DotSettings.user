@@ -1,0 +1,9 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=19448268_002D563e_002D4fca_002D8a1b_002Dba4f46112b18/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="register" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\Users\sala\RiderProjects\PlaylistGame\Test" Presentation="&amp;lt;Test&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=797fae5b_002D9cd5_002D499f_002Db92c_002D9c60d0da625a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="register #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::2C891737-4299-4B7E-9EA9-66642F415C02::.NETCoreApp,Version=v3.1::PlaylistTest.Tests.register&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

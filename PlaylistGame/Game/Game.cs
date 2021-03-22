@@ -11,7 +11,7 @@ namespace PlaylistGame
 {
     public class Game
     {
-        public static JsonSerializerSettings JsonSerializerSettings { get; set; }
+       
 
         private static readonly string connection =
             "Server=localhost;Port=5435;Database=playlist;User Id=postgres;Password=postgres;";
@@ -37,6 +37,7 @@ namespace PlaylistGame
                     using var command = new NpgsqlCommand(
                         "insert into player (username, password, token,points,admin) values (:username, :password, :token,0,0)",
                         conn);
+
 
 
                     //hash the password using sha1 algorithm
