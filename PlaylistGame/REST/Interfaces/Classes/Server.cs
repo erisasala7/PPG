@@ -85,7 +85,7 @@ namespace PlaylistGame
                         request.ContentString.Split(new[] {"Password\":\"", "\"}"}, StringSplitOptions.None);
                     var getpassw = password[1];
                     Game.user_login(getpassw, getusername);
-                    response.SetContent(" ");
+                    response.SetContent(Game.user_login(getpassw, getusername).ToString());
                     response.Send(stream);
                 }
 
@@ -102,17 +102,17 @@ namespace PlaylistGame
                     var getgenre = name[13];
 
                     var usernamelib =
-                        request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"}, StringSplitOptions.None);
+                        request.UserAuthorization.Split(new[] {" ", "-ppbgToken"}, StringSplitOptions.None);
 
                     var getusernamelib = usernamelib[1];
                     Game.add_in_lib(getname, geturl, getgenre, getrating, getusernamelib);
-                    response.SetContent(" ");
+                    response.SetContent(Game.add_in_lib(getname, geturl, getgenre, getrating, getusernamelib).ToString());
                     response.Send(stream);
                 }
 
                 if (request.Url.Path.Contains("playlist"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
 
                     var getusernamelib = usernamelib[1];
@@ -120,7 +120,7 @@ namespace PlaylistGame
                         request.ContentString.Split(new[] {"Name\":  ", "\""}, StringSplitOptions.None);
                     var getnameforplaylist = nameforplaylist[3];
                     Game.add_in_playlist(getusernamelib, getnameforplaylist);
-                    response.SetContent(" ");
+                    response.SetContent( Game.add_in_playlist(getusernamelib, getnameforplaylist));
                     response.Send(stream);
                 }
 
@@ -128,10 +128,10 @@ namespace PlaylistGame
                 {
                     var username =
                         request.ContentString.Split(new[] {"\"Username1\"", "\""}, StringSplitOptions.None);
-                    var username1 = username[3];
-                    var username2 = username[7];
+                    var username1 = username[2];
+                    var username2 = username[6];
                     Game.battle_logic(username1, username2);
-                    response.SetContent(" ");
+                    response.SetContent("Game Done.");
                     response.Send(stream);
                 }
             }
@@ -144,11 +144,12 @@ namespace PlaylistGame
 
                 if (request.Url.Path.Contains("users"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     if (usernamelib.Length > 0)
                     {
                         var getusernamelib = usernamelib[1];
+                        Console.WriteLine(getusernamelib);
                         Game.get_user_data(usernamegetmethod, getusernamelib);
                         response.SetContent( Game.get_user_data(usernamegetmethod, getusernamelib));
                         response.Send(stream);
@@ -157,26 +158,26 @@ namespace PlaylistGame
 
                 if (request.Url.Path.Contains("actions"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     if (usernamelib.Length > 0)
                     {
                         var getusernamelib = usernamelib[1];
                         Game.get_actions(getusernamelib);
-                        response.SetContent(" ");
+                        response.SetContent(Game.get_actions(getusernamelib).ToString());
                         response.Send(stream);
                     }
                 }
 
                 if (request.Url.RawUrl.Contains("lib"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     if (usernamelib.Length > 0)
                     {
                         var getusernamelib = usernamelib[1];
                         Game.get_lib(getusernamelib);
-                        response.SetContent(" ");
+                        response.SetContent(Game.get_lib(getusernamelib));
                         response.Send(stream);
                     }
                 }
@@ -190,7 +191,7 @@ namespace PlaylistGame
 
                 if (request.Url.RawUrl.Contains("stats"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     if (usernamelib.Length > 0)
                     {
@@ -203,7 +204,7 @@ namespace PlaylistGame
 
                 if (request.Url.RawUrl.Contains("score"))
                 {
-                    var usernamelib = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var usernamelib = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     if (usernamelib.Length > 0)
                     {
@@ -220,7 +221,7 @@ namespace PlaylistGame
                 {
                     var urlteil = request.Url.RawUrl.Split("/").Last();
                     Console.WriteLine(urlteil);
-                    var auth = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var auth = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     var auth1 = auth[1];
                     Game.del_lib(urlteil, auth1);
@@ -241,7 +242,7 @@ namespace PlaylistGame
                     Console.WriteLine(name + " " + bio + " " + img);
                     var urlteil = request.Url.RawUrl.Split("/").Last();
                     Console.WriteLine(urlteil);
-                    var auth = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var auth = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     var auth1 = auth[1];
                     Console.WriteLine(auth1);
@@ -261,15 +262,15 @@ namespace PlaylistGame
 
                 if (request.Url.RawUrl.Contains("actions"))
                 {
-                    var auth = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var auth = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     var auth1 = auth[1];
                     var actions = request.ContentString.Split(new[] {"actions\": \"", "\"}"},
                         StringSplitOptions.None);
                     var action = actions[1];
-                    if (action.Contains("VVVVV") || action.Contains("SSSSS") || action.Contains("RRRRR") ||
-                        action.Contains("LLLLL")
-                        || action.Contains("PPPPP"))
+                    if (((action =="VVVVV" || action == "SSSSS" || action =="RRRRR" ||
+                        action=="LLLLL"
+                        || action == "PPPPP")&& action.Length == 5))
                     {
                         Game.update_actions(action, auth1);
                         response.SetContent(Game.update_actions(action, auth1));
@@ -287,7 +288,7 @@ namespace PlaylistGame
 
                 if (request.Url.RawUrl.Contains("playlist"))
                 {
-                    var auth = request.UserAuthorization.Split(new[] {"Basic ", "-ppbToken"},
+                    var auth = request.UserAuthorization.Split(new[] {" ", "-ppbgToken"},
                         StringSplitOptions.None);
                     var auth1 = auth[1];
                     var id = request.ContentString.Split(new[] {"\"FromPosition\": ", ","}, StringSplitOptions.None);

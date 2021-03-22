@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Npgsql;
@@ -35,7 +36,7 @@ namespace PlaylistGame
                         connection);
                     conn.Open();
                     using var command = new NpgsqlCommand(
-                        "insert into player (username, password, token,points,admin) values (:username, :password, :token,0,0)",
+                        "insert into player (username, password, token,points,admin,games_played) values (:username, :password, :token,0,0,0)",
                         conn);
 
 
@@ -96,11 +97,19 @@ namespace PlaylistGame
                 reader.Read();
 
                 if (reader.HasRows)
+                {
                     Console.Write($"{Environment.NewLine}Logged In");
+                    return $"{Environment.NewLine}Logged In"; 
+                }
+
                 else
+                {
+                    Console.Write($"{Environment.NewLine}User does not exist");
+                    return $"{Environment.NewLine}User does not exist";
+                }
                     //reader.Close();
 
-                    Console.Write($"{Environment.NewLine}User does not exist");
+                    
 
                 con.Close();
             }
@@ -196,8 +205,6 @@ namespace PlaylistGame
                         "SELECT username, token  FROM player WHERE username='" + usernamegetmethod +
                         "'",
                         con);
-
-                //command.Parameters.AddWithValue("username", getusernamelib);
                 con.Open();
                 var reader = command.ExecuteReader();
 
@@ -222,8 +229,8 @@ namespace PlaylistGame
                         i++;
                     }
 
-                    Console.Write($"{Environment.NewLine}{payload}");
-                    return payload.ToString();
+                    Console.Write($"{Environment.NewLine}User data: {payload}");
+                    return "User Data: "+ payload;
                 }
 
                 return "No rows";
@@ -268,8 +275,8 @@ namespace PlaylistGame
                     i++;
                 }
 
-                Console.Write($"{Environment.NewLine}{payload}");
-                return payload.ToString();
+                Console.Write($"{Environment.NewLine}Actions : {payload}");
+                return "Actions: "+payload.ToString();
             }
 
 
@@ -315,8 +322,8 @@ namespace PlaylistGame
                     i++;
                 }
 
-                Console.Write($"{Environment.NewLine}{payload}");
-                return payload.ToString();
+                Console.Write($"{Environment.NewLine}Lib: {payload}");
+                return "Lib: "+payload.ToString();
             }
             else
             {
@@ -358,8 +365,8 @@ namespace PlaylistGame
                     i++;
                 }
 
-                Console.Write($"{Environment.NewLine}{payload}");
-                return payload.ToString();
+                Console.Write($"{Environment.NewLine}Playlist: {payload}");
+                return "Playlist: "+payload.ToString();
             }
             else
             {
@@ -375,7 +382,7 @@ namespace PlaylistGame
 
             var command =
                 new NpgsqlCommand(
-                    "SELECT * FROM stats WHERE username='" + getusernamelib + "'",
+                    "SELECT points FROM player WHERE username='" + getusernamelib + "'",
                     con);
 
             //command.Parameters.AddWithValue("username", getusernamelib);
@@ -402,8 +409,8 @@ namespace PlaylistGame
                     i++;
                 }
 
-                Console.Write($"{Environment.NewLine}{payload}");
-                return payload.ToString();
+                Console.Write($"{Environment.NewLine}Stats: {payload}");
+                return "Stats: "+payload.ToString();
             }
             else
             {
@@ -419,7 +426,7 @@ namespace PlaylistGame
 
             var command =
                 new NpgsqlCommand(
-                    "SELECT * FROM scoreboard WHERE username='" + getusernamelib + "'",
+                    "SELECT games_played FROM scoreboard WHERE username='" + getusernamelib + "'",
                     con);
 
 
@@ -446,8 +453,8 @@ namespace PlaylistGame
                     i++;
                 }
 
-                Console.Write($"{Environment.NewLine}{payload}");
-                return payload.ToString();
+                Console.Write($"{Environment.NewLine}Score: {payload}");
+                return "Score: "+payload.ToString();
             }
             else
             {
@@ -480,8 +487,8 @@ namespace PlaylistGame
                             $"Delete FROM library where name = '{urlteil}' and username = '{auth1}'",
                             con);
                     command.ExecuteNonQuery();
-                    Console.Write($"{Environment.NewLine}Deleted");
-                    return $"{Environment.NewLine}Deleted";
+                    Console.Write($"{Environment.NewLine}Song Deleted");
+                    return $"{Environment.NewLine}Song Deleted";
                 }
                 catch (Exception e)
                 {
@@ -506,7 +513,10 @@ namespace PlaylistGame
                     conn);
             var reader = comm.ExecuteReader();
             if (!reader.HasRows)
+            {
                 Console.Write($"{Environment.NewLine}No rows found");
+                return $"{Environment.NewLine}No rows found";
+            }
             else
                 try
                 {
@@ -518,8 +528,8 @@ namespace PlaylistGame
                             $" Update player set nickname = '{name}', bio = '{bio}', image = '{img}' where username = '{auth1}'",
                             con);
                     command.ExecuteNonQuery();
-                    Console.Write($"{Environment.NewLine}Updated");
-                    return $"{Environment.NewLine}Updated";
+                    Console.Write($"{Environment.NewLine}User Updated");
+                    return $"{Environment.NewLine}User Updated";
                 }
                 catch (Exception e)
                 {
@@ -544,8 +554,8 @@ namespace PlaylistGame
                         con);
                 command.ExecuteNonQuery();
 
-                Console.Write($"{Environment.NewLine}Updated");
-                return $"{Environment.NewLine}Updated";
+                Console.Write($"{Environment.NewLine}Actions Updated");
+                return $"{Environment.NewLine}Actions Updated";
             }
             catch (Exception e)
             {
@@ -586,8 +596,8 @@ namespace PlaylistGame
                                 $" Update playlist set position = '{id}' where username = '{auth1}'  and pid = {pos}",
                                 con);
                         command.ExecuteNonQuery();
-                        Console.Write($"{Environment.NewLine}Updated");
-                        return $"{Environment.NewLine}Updated";
+                        Console.Write($"{Environment.NewLine}Playlist Updated");
+                        return $"{Environment.NewLine}Playlist Updated";
                     }
                     catch (Exception e)
                     {
@@ -616,8 +626,8 @@ namespace PlaylistGame
 
         public static string battle_logic(string username1, string username2)
         {
-            Console.WriteLine(username1);
-            Console.WriteLine(username2);
+            //Console.WriteLine(username1);
+            //Console.WriteLine(username2);
             string responseContent1 = null;
             string responseContent2 = null;
             string responseContent3 = null;
@@ -633,9 +643,10 @@ namespace PlaylistGame
             //command.Parameters.AddWithValue("username", getusernamelib);
             con.Open();
             command.ExecuteNonQuery();
-            Console.WriteLine("DONE");
+            //Console.WriteLine("DONE");
             con.Close();
             put_actions(username1);
+           
             var command1 =
                 new NpgsqlCommand(
                     $"SELECT actions FROM player WHERE username='{username1}'",
@@ -652,21 +663,24 @@ namespace PlaylistGame
                 responseContent1 = reader1[0].ToString();
                 //   response.SetContent(responseContent);
                 // response.Send(stream);
-                Console.WriteLine(responseContent1);
+                //Console.WriteLine(responseContent1);
                 
-                if (responseContent1.Equals(" "))
+                if (responseContent1 != "")
 
                 {
-                    put_actions(username1);
+                    Console.WriteLine(username1 + ": "+responseContent1);
+                   // return username1 + ": " + responseContent1;
+                    
 
                 }
                 else
                 {
-                    Console.WriteLine(responseContent1);
-                    
+                    //put_actions(username1);
+
                 }
                 con.Close();
                 put_actions(username2);
+               
                 var command2 =
                     new NpgsqlCommand(
                         $"SELECT actions FROM player WHERE username='{username2}'",
@@ -682,7 +696,7 @@ namespace PlaylistGame
                     responseContent2 = reader2[0].ToString();
                     //   response.SetContent(responseContent);
                     // response.Send(stream);
-                    if (responseContent2.Equals(" "))
+                    if (responseContent2 == null)
 
                     {
                         put_actions(username2);
@@ -690,15 +704,17 @@ namespace PlaylistGame
                     }
                     else
                     {
-                        Console.WriteLine(responseContent2);
+                        Console.WriteLine(username2 + ": "+responseContent2);
                         //return responseContent2;
+                       // return username2 + ": " + responseContent2;
                     }
 
                 }
                 else
                 {
                     Console.WriteLine(" not found");
-                    
+                    return " not found";
+
                 }
 
                 con.Close();
@@ -710,18 +726,70 @@ namespace PlaylistGame
                 //command.Parameters.AddWithValue("username", getusernamelib);
                 con.Open();
                 command3.ExecuteNonQuery();
-                Console.WriteLine("Updated");
+                //Console.WriteLine("Updated");
                 con.Close();
                 var win = 0;
                 var games_played = 0;
+                var command4 = new NpgsqlCommand(
+                    $"SELECT games_played, points FROM player WHERE username='{username1}'",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                var reader4 = command4.ExecuteReader();
+                reader4.Read();
+                //  string winning = reader3[1].ToString();
+                var winpoint1 = reader4.GetInt32(1);
+                var games1 = reader4.GetInt32(0);
+                    
+                var points1 = winpoint1 + 1;
+                Console.WriteLine("Points: "+points1);
+                var game = games1 + 1;
+                con.Close();
+                var updategame1 = new NpgsqlCommand(
+                    $"Update player SET  games_played = {game} where username='{username1}' ",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                updategame1.ExecuteNonQuery();
+                Console.WriteLine("Games played : "+game);
+                con.Close();
+                var command6 = new NpgsqlCommand(
+                    $"SELECT games_played, points FROM player WHERE username='{username2}'",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                var reader3 = command6.ExecuteReader();
+                reader3.Read();
+                //  string winning = reader3[1].ToString();
+                var winpoint = reader3.GetInt32(1);
+                var games = reader3.GetInt32(0);
+                // Console.WriteLine(winpoint);
+                var points = winpoint + 1;
+                Console.WriteLine("Points: "+points);
+                var gamess = games + 1;
+                con.Close();
+                var updategame = new NpgsqlCommand(
+                    $"Update player SET  games_played = {gamess} where username='{username2}' ",
+                    con);
+
+                //command.Parameters.AddWithValue("username", getusernamelib);
+                con.Open();
+                updategame.ExecuteNonQuery();
+                Console.WriteLine("Games played : "+gamess);
+                    
+                con.Close();
                 if ((responseContent1.Contains("RRRRR") && responseContent2.Contains("RRRRR")))
                 {
                     //win = 0;
                     Console.WriteLine("Draw");
-                   
+                    return "Draw";
+
                 }
 
-                if (responseContent1.Contains("RRRRR") && responseContent2.Contains("SSSSS") ||
+               else if (responseContent1.Contains("RRRRR") && responseContent2.Contains("SSSSS") ||
                     responseContent1.Contains("RRRRR") && responseContent2.Contains("LLLLL") ||
                     responseContent1.Contains("SSSSS") && responseContent2.Contains("PPPPP") ||
                     responseContent1.Contains("SSSSS") && responseContent2.Contains("LLLLL") ||
@@ -732,30 +800,34 @@ namespace PlaylistGame
                     responseContent1.Contains("vvvvv") && responseContent2.Contains("RRRRR") ||
                     responseContent1.Contains("vvvvv") && responseContent2.Contains("SSSSS"))
                 {
-                    var command4 = new NpgsqlCommand(
-                        $"SELECT games_played, points FROM player WHERE username='{username1}'",
+                   
+                    var update = new NpgsqlCommand(
+                        $"Update player SET  admin = 0,actions = ' ' where username='{username2}' ",
                         con);
 
                     //command.Parameters.AddWithValue("username", getusernamelib);
                     con.Open();
-                    var reader3 = command4.ExecuteReader();
-                    reader3.Read();
-                    //  string winning = reader3[1].ToString();
-                    var winpoint = reader3.GetInt32(1);
-                    Console.WriteLine(winpoint);
-                    var points = winpoint + 1;
-                    Console.WriteLine(points);
+                    update.ExecuteNonQuery();
+                   // Console.WriteLine("Winner1");
                     con.Close();
                     var command5 = new NpgsqlCommand(
-                        $"Update player SET points = '{points}', admin = 1,actions = ' ' where username='{username1}' ",
+                        $"Update player SET points = '{points1}', admin = 1,actions = ' ' where username='{username1}' ",
                         con);
 
                     //command.Parameters.AddWithValue("username", getusernamelib);
                     con.Open();
                     command5.ExecuteNonQuery();
-                    Console.WriteLine("Winner1");
+                    // Console.WriteLine("Winner1");
                     con.Close();
+                    var update1 = new NpgsqlCommand(
+                        $"Update player SET  admin = 0 where username='{username2}' ",
+                        con);
 
+                    //command.Parameters.AddWithValue("username", getusernamelib);
+                    con.Open();
+                    update1.ExecuteNonQuery();
+                    // Console.WriteLine("Winner1");
+                    con.Close();
                     var command9 = new NpgsqlCommand(
                         $"Update battle SET winner = '{username1}' where username1='{username1}' and username2 = '{username2}' ",
                         con);
@@ -764,24 +836,12 @@ namespace PlaylistGame
                     con.Open();
                     command9.ExecuteNonQuery();
                     Console.WriteLine($"THE WINNER IS {username1}");
-                    
+                    return $"THE WINNER IS {username1}";
+
                 }
                 else
                 {
-                    var command6 = new NpgsqlCommand(
-                        $"SELECT games_played, points FROM player WHERE username='{username2}'",
-                        con);
-
-                    //command.Parameters.AddWithValue("username", getusernamelib);
-                    con.Open();
-                    var reader3 = command6.ExecuteReader();
-                    reader3.Read();
-                    //  string winning = reader3[1].ToString();
-                    var winpoint = reader3.GetInt32(1);
-                    Console.WriteLine(winpoint);
-                    var points = winpoint + 1;
-                    Console.WriteLine(points);
-                    con.Close();
+                   
                     var command7 = new NpgsqlCommand(
                         $"Update player SET points = '{points}', admin = 1, actions = ' ' where username='{username2}' ",
                         con);
@@ -789,7 +849,16 @@ namespace PlaylistGame
                     //command.Parameters.AddWithValue("username", getusernamelib);
                     con.Open();
                     command7.ExecuteNonQuery();
-                    Console.WriteLine("Winner2");
+                   // Console.WriteLine("Winner2");
+                    con.Close();
+                    var update1 = new NpgsqlCommand(
+                        $"Update player SET  admin = 0 where username='{username1}' ",
+                        con);
+
+                    //command.Parameters.AddWithValue("username", getusernamelib);
+                    con.Open();
+                    update1.ExecuteNonQuery();
+                    // Console.WriteLine("Winner1");
                     con.Close();
                     var command8 = new NpgsqlCommand(
                         $"Update battle SET winner = '{username2}' where username1='{username1}' and username2 = '{username2}' ",
@@ -799,7 +868,8 @@ namespace PlaylistGame
                     con.Open();
                     command8.ExecuteNonQuery();
                     Console.WriteLine($"THE WINNER IS {username2}");
-                   
+                    return $"THE WINNER IS {username2}";
+
                 }
             }
 

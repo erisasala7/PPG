@@ -23,6 +23,7 @@ echo should fail:
 curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"kienboec\", \"Password\":\"daniel\"}"
 echo.
 curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"kienboec\", \"Password\":\"different\"}"
+curl -X POST http://localhost:10002/users --header "Content-Type: application/json" -d "{\"Username\":\"erisa\",    \"Password\":\"test\"}"
 echo. 
 echo.
 
@@ -33,11 +34,13 @@ echo.
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"altenhof\", \"Password\":\"markus\"}"
 echo.
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"admin\",    \"Password\":\"istrator\"}"
+curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"erisa\",    \"Password\":\"test\"}"
 echo.
 
 echo should fail:
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"kienboec\", \"Password\":\"different\"}"
 echo.
+curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"erisa\",    \"Password\":\"test1\"}"
 echo.
 REM --------------------------------------------------
 echo 3) edit user data
