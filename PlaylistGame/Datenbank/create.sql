@@ -36,24 +36,6 @@ create table playlist
 )
 ;
 
-create table stats
-(
-    statsid  serial,
-    username varchar(255) references player (username),
-    wins     int
-
-
-)
-;
-create table scoreboard
-(
-    statsid  serial,
-    username varchar(255) references player (username),
-    wins     int
-
-
-)
-;
 create table battle
 (
     battleid      serial,
