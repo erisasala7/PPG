@@ -21,7 +21,7 @@ I devided my program in two parts: REST and Game.
 The [REST](PlaylistGame/REST/Interfaces/) Folder ist the server part. There are the needed Classes and Interfaces for a http Server. 
 The [Game](PlaylistGame/Game/) Folder contains a file with all the nessasary methods for the game. The file can be found [here](PlaylistGame/Game/Game.cs)
 
-Another part of the assigment was that we had to do at least 10 unit tests. In [here]() is the test File. I did testmethods for the methods that I made in the [Game]() File. 
+Another part of the assigment was that we had to do at least 10 unit tests. In [here](Test/PlaylistNUnitTests.cs) is the test File. I did testmethods for the methods that I made in the [Game](PlaylistGame/Game/Game.cs) File. 
 I decided to so these test because in my opinion, these methods are important and need to be right.
 
 Hours : 80-90
