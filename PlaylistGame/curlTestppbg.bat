@@ -34,6 +34,7 @@ echo.
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"altenhof\", \"Password\":\"markus\"}"
 echo.
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"admin\",    \"Password\":\"istrator\"}"
+echo.
 curl -X POST http://localhost:10002/sessions --header "Content-Type: application/json" -d "{\"Username\":\"erisa\",    \"Password\":\"test\"}"
 echo.
 
@@ -53,11 +54,14 @@ curl -X PUT http://localhost:10002/users/kienboec --header "Content-Type: applic
 echo.
 curl -X PUT http://localhost:10002/users/altenhof --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Altenhofer\", \"Bio\": \"live long and prosper...\",  \"Image\": \":-D\"}"
 echo.
+curl -X PUT http://localhost:10002/users/erisa --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Sala\", \"Bio\": \"...\",  \"Image\": \";D\"}"
+echo.
 echo should fail:
 curl -X GET http://localhost:10002/users/altenhof --header "Authorization: Basic kienboec-ppbToken"
 echo.
 curl -X GET http://localhost:10002/users/kienboec --header "Authorization: Basic altenhof-ppbToken"
 curl -X GET http://localhost:10002/users/someGuy  --header "Authorization: Basic kienboec-ppbToken"
+curl -X GET http://localhost:10002/users/erisa  --header "Authorization: Basic kienboec-ppbToken"
 
 REM --------------------------------------------------
 echo 4) stats
@@ -65,6 +69,7 @@ curl -X GET http://localhost:10002/stats --header "Authorization: Basic kienboec
 echo.
 curl -X GET http://localhost:10002/stats --header "Authorization: Basic altenhof-ppbToken"
 echo.
+curl -X GET http://localhost:10002/stats --header "Authorization: Basic erisa-ppbToken"
 echo.
 
 REM --------------------------------------------------
@@ -72,6 +77,7 @@ echo 5) scoreboard
 curl -X GET http://localhost:10002/score --header "Authorization: Basic kienboec-ppbToken"
 curl -X GET http://localhost:10002/score --header "Authorization: Basic altenhof-ppbToken"
 echo.
+curl -X GET http://localhost:10002/score --header "Authorization: Basic erisa-ppbToken"
 echo.
 
 REM --------------------------------------------------
@@ -79,13 +85,14 @@ echo 6) get library
 curl -X GET http://localhost:10002/lib --header "Authorization: Basic kienboec-ppbToken"
 curl -X GET http://localhost:10002/lib --header "Authorization: Basic altenhof-ppbToken"
 echo.
+curl -X GET http://localhost:10002/lib --header "Authorization: Basic erisa-ppbToken"
 echo.
 
 REM --------------------------------------------------
 echo 7) manipulate (add)
-curl -X POST http://localhost:10002/lib --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Best_song_ever5\", \"Url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\", \"Rating\": 5, \"Genre\": \"Pop\"}"
+curl -X POST http://localhost:10002/lib --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Best_song_ever\", \"Url\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\", \"Rating\": 5, \"Genre\": \"Pop\"}"
 curl -X POST http://localhost:10002/lib --header "Content-Type: application/json" --header "Authorization: Basic kienboec-ppbToken" -d "{\"Name\": \"Good_Mood_Song\", \"Url\": \"https://youtu.be/H9cmPE88a_0\", \"Rating\": 4, \"Genre\": \"Pop\", \"Title\": \"Duck Tales Intro\", \"Length\": \"2:52\", \"Album\": \"Theme Songs\"}"
-curl -X POST http://localhost:10002/lib --header "Content-Type: application/json" --header "Authorization: Basic altenhof-ppbToken" -d "{\"Name\": \"Super_Mario_song\", \"Url\": \"https://www.youtube.com/watch?v=wyoNnMO3zFk\", \"Rating\": 4, \"Genre\": \"Game Music\", \"Title\": \"Super Mario\"}"
+curl -X POST http://localhost:10002/lib --header "Content-Type: application/json" --header "Authorization: Basic erisa-ppbToken" -d "{\"Name\": \"Super_Mario_song\", \"Url\": \"https://www.youtube.com/watch?v=wyoNnMO3zFk\", \"Rating\": 4, \"Genre\": \"Game Music\", \"Title\": \"Super Mario\"}"
 echo.
 echo.
 
@@ -157,8 +164,8 @@ echo.
 
 REM --------------------------------------------------
 echo 15) battle (kienboec starts the 15 seconds tournament)
-start /b "kienboec battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic kienboec-ppbToken" -d "{\"Username\":\"kienboec\", \"Password\":\"altenhof\"}"
-start /b "altenhof battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic altenhof-ppbToken" -d "{\"Username\":\"altenhof\", \"Password\":\"kienboec\"}"
+start /b "kienboec battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic kienboec-ppbToken" -d "{\"Username1\":\"kienboec\", \"Username2\":\"altenhof\"}"
+start /b "erisa battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic erisa-ppbToken" -d "{\"Username1\":\"erisa\", \"Password\":\"kienboec\"}"
 echo.
 echo.
 

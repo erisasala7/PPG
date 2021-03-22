@@ -1,0 +1,37 @@
+Register User 
+Url: localhost:10002/users
+Body: 
+- {"Username":"erisa",    "Password":"test"} -- success
+- {"Username":"altenhof", "Password":"markus"}
+
+- {"Username":"erisa",    "Password":"test1"} -- fail
+
+Login User 
+Url: localhost:10002/sessions
+Auth: Token Bearer --> username-ppbgToken
+- erisa-ppbgToken   {"Username":"erisa",    "Password":"test"} --success
+
+- altenhof-ppbgToken   {"Username":"erisa",    "Password":"test"} --fail
+
+get User Data. In Postman:  Bearer Token: Token name
+
+- erisa-ppbgToken localhost:10002/users/erisa
+
+
+ edit User Data
+
+- erisa-ppbgToken  {"Name":"erisa", "Bio": "Me...", "Image": ":)"}
+
+add to lib
+- erisa-ppbgToken   {"Name": "Best_song_ever", "Url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "Rating": 5, "Genre": "Pop"}
+
+add to playlist
+
+- erisa-ppbgToken  {"Name": "Super_Mario_song"}
+
+actions
+-erisa-ppbgToken   {"actions": "RRRRR"}
+-altenhof-ppbgToken   {"actions": "SSSSS"}
+
+battle
+{"Username1":"erisa", "Username2":"altenhof"}
