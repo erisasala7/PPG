@@ -164,7 +164,7 @@ echo.
 
 REM --------------------------------------------------
 echo 15) battle (kienboec starts the 15 seconds tournament)
-start /b "kienboec battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic kienboec-ppbToken" -d "{\"Username1\":\"kienboec\", \"Username2\":\"altenhof\"}"
+start /b "kienboec battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic kienboec-ppbToken" -d "{\"Username1\":\"erisa\", \"Username2\":\"altenhof\"}"
 start /b "erisa battle" curl -X POST http://localhost:10002/battles --header "Authorization: Basic erisa-ppbToken" -d "{\"Username1\":\"erisa\", \"Password\":\"kienboec\"}"
 echo.
 echo.
